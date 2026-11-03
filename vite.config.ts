@@ -21,7 +21,13 @@ export default defineConfig(({ mode }) => {
   return {
     resolve: { alias: { '@': fileURLToPath(new URL('./src', import.meta.url)) } },
     plugins: [react(), tailwindcss()],
-    server: { host: '127.0.0.1', port: 5174, strictPort: true, https },
+    server: {
+      host: '127.0.0.1',
+      port: 5174,
+      strictPort: true,
+      https,
+      watch: { usePolling: true, interval: 250 },
+    },
     build: { outDir: 'dist', emptyOutDir: true, sourcemap: true },
   };
 });
