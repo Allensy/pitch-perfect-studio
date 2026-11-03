@@ -1,4 +1,4 @@
-import { modes } from '@/app/navigation';
+import { modeOptions } from '@/components/practice-options';
 import { captureLabel } from '@/components/audio/capture-status';
 import { Output } from '@/components/audio/output-controls';
 import { Button } from '@/components/ui/button';
@@ -15,8 +15,6 @@ import { KeyboardSettings } from './KeyboardSettings';
 import { NoteSettings } from './NoteSettings';
 import { TunerSettings } from './TunerSettings';
 import { useSetupDraft } from './useSetupDraft';
-
-const modeOptions = modes.map((mode) => ({ value: mode.id, label: mode.label }));
 
 export function Setup({
   runtime,

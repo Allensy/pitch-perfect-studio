@@ -1,13 +1,15 @@
 import type { Mode } from '@/domain/types';
+import { modeOptions } from '@/components/practice-options';
 import { Activity, ArrowUpRight, AudioLines, Layers3, Music2, type LucideIcon } from 'lucide-react';
 
-export const modes: { id: Mode; label: string; icon: LucideIcon }[] = [
-  { id: 'notes', label: 'Notes', icon: Music2 },
-  { id: 'intervals', label: 'Intervals', icon: ArrowUpRight },
-  { id: 'chords', label: 'Chords', icon: Layers3 },
-  { id: 'harmony', label: 'Harmony', icon: AudioLines },
-  { id: 'tuner', label: 'Tuner', icon: Activity },
-];
+const icons: Record<Mode, LucideIcon> = {
+  notes: Music2,
+  intervals: ArrowUpRight,
+  chords: Layers3,
+  harmony: AudioLines,
+  tuner: Activity,
+};
+export const modes = modeOptions.map(({ value: id, label }) => ({ id, label, icon: icons[id] }));
 export const title = {
   notes: 'Listen. Trust your ears.',
   intervals: 'Hear the space between.',

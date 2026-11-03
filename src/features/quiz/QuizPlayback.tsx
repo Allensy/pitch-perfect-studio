@@ -19,7 +19,6 @@ export function QuizPlayback({
   const q = round.question;
   return (
     <>
-      {' '}
       <div className="sound-stage">
         <div className="stage-meta">
           <span>

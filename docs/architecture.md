@@ -22,7 +22,7 @@ existing visuals and musical behavior rather than introducing product changes.
   screenshots and keyboard/dialog behavior against the pre-refactor baseline.
 
 Implemented on the refactor branch: App is a 17-line composition entry; the
-Setup dialog is 155 lines and the quiz panel is 117 lines. Local validation:
+Setup dialog is 153 lines and the quiz panel is 117 lines. Local validation:
 150 unit/service/hook tests and 20 browser scenarios pass, alongside strict
 types, lint, formatting and the production build. The compiled CSS hash is
 unchanged. Phone/desktop screenshots were inspected against the baseline;
@@ -63,6 +63,8 @@ Feature components own transient form state; persistent settings, scores,
 capture and playback remain runtime-owned. Do not create a second settings
 store inside a control or move resource lifetimes into rendering. ESLint rejects
 React/UI imports from domain and service-owner modules.
+Feature modules also cannot import the application composition layer; shared
+mode/option labels live below the shell, alongside the shared controls.
 
 Pitch Perfect Studio is a static, client-side React application. Vite serves and
 builds the app; strict TypeScript, Tailwind CSS, owned Radix-backed UI components

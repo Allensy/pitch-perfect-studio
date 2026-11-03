@@ -9,6 +9,22 @@ export default tseslint.config(
     rules: { '@typescript-eslint/no-unused-vars': ['error', { argsIgnorePattern: '^_' }] },
   },
   {
+    files: ['src/features/**/*.{ts,tsx}'],
+    rules: {
+      'no-restricted-imports': [
+        'error',
+        {
+          patterns: [
+            {
+              group: ['@/app/**', '../../app/**'],
+              message: 'Feature modules may use shared catalogs, not the app composition layer.',
+            },
+          ],
+        },
+      ],
+    },
+  },
+  {
     files: [
       'src/domain/**/*.{ts,tsx}',
       'src/audio.ts',

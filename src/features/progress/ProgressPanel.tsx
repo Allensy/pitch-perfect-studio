@@ -1,4 +1,4 @@
-import { modes } from '@/app/navigation';
+import { modeOptions } from '@/components/practice-options';
 import { Button } from '@/components/ui/button';
 import { NOTE_NAMES } from '@/domain/music';
 import type { AppState, Runtime } from '@/domain/types';
@@ -49,7 +49,7 @@ export function Progress({
         <dl className="progress-breakdown">
           {(['notes', 'intervals', 'chords'] as const).map((mode) => (
             <div key={mode}>
-              <dt>{modes.find((m) => m.id === mode)?.label}</dt>
+              <dt>{modeOptions.find((option) => option.value === mode)?.label}</dt>
               <dd>
                 {p.quizzes[mode].correct}/{p.quizzes[mode].attempts} correct ·{' '}
                 {p.quizzes[mode].firstTryCorrect} first try · {p.quizzes[mode].skips} skipped
