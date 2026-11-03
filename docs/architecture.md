@@ -24,6 +24,21 @@ Audio services are owned outside React rendering. Audio and microphone access
 start only from user actions, and pending acquisitions can be cancelled. Keep
 pure music rules separate from UI and resource lifecycle code.
 
+Where the optional Audio Session API exists, intentional playback requests
+`playback` mode, including for music playback with the phone's silent switch on.
+Capture owns a `play-and-record` lease from preparation through microphone use;
+stopping tracks restores playback mode. Cancellation, denial, graph failure and
+interruption release the lease too. Late permission results clean up their own
+tracks and reassert the mode appropriate to the current owner. Playback cues
+must retain recording mode while capture is active. Disposal releases the
+session to `auto`. Unsupported or throwing APIs cannot block audio or cleanup.
+
+This handles a documented [WebKit audio-session issue](https://bugs.webkit.org/show_bug.cgi?id=236219)
+without increasing gain or recreating the shared AudioContext. Platforms may
+still use different physical volume levels/routes while recording. Real-device
+silent-switch and start/stop microphone checks remain necessary; mocked API
+transitions are not loudness measurements.
+
 ## Practice invariants
 
 Skips, reference playback and simulated microphone input never earn scores or

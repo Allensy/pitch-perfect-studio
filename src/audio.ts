@@ -53,6 +53,42 @@ export class AudioEngine {
   private disposed = false;
   private volume = 65;
   private muted = false;
+  private captureSessions = new Set<symbol>();
+  private sessionConfigured = false;
+
+  private applyAudioSession() {
+    // Optional Audio Session API (notably iOS). Never let an unsupported or
+    // restricted setter prevent playback or leave microphone tracks running.
+    try {
+      const session = (
+        globalThis.navigator as (Navigator & { audioSession?: { type: string } }) | undefined
+      )?.audioSession;
+      if (!session) return;
+      const type = this.disposed
+        ? 'auto'
+        : this.captureSessions.size
+          ? 'play-and-record'
+          : 'playback';
+      if (session.type !== type) session.type = type;
+      this.sessionConfigured = true;
+    } catch {
+      // Feature detection includes implementations whose setter can throw.
+    }
+  }
+
+  /** One cancellable capture request owns one session lease. */
+  acquireCaptureSession(): () => void {
+    if (this.disposed) return () => {};
+    const owner = Symbol('capture session');
+    this.captureSessions.add(owner);
+    this.applyAudioSession();
+    return () => {
+      this.captureSessions.delete(owner);
+      // Reassert the current owner's mode even on a repeated release: a late
+      // getUserMedia grant can change the OS route after its request was cancelled.
+      if (!this.disposed) this.applyAudioSession();
+    };
+  }
 
   getContext() {
     return this.context;
@@ -62,6 +98,7 @@ export class AudioEngine {
     if (this.disposed)
       return Promise.reject(new Error('Audio is unavailable after the application has closed.'));
     try {
+      this.applyAudioSession();
       if (!this.context) {
         const Constructor =
           globalThis.AudioContext ??
@@ -344,6 +381,8 @@ export class AudioEngine {
   dispose() {
     if (this.disposed) return;
     this.disposed = true;
+    this.captureSessions.clear();
+    if (this.sessionConfigured) this.applyAudioSession();
     this.cancel();
     for (const voice of [...this.releasing]) voice.dispose(true);
     if (this.context) {
@@ -424,6 +463,7 @@ export class CaptureController {
   private onStatus: StatusHandler | null = null;
   private onSample: ((frequency: number | null, timeMs: number) => void) | null = null;
   private disposed = false;
+  private releaseSession: (() => void) | null = null;
   constructor(private readonly engine: AudioEngine) {}
 
   async start(
@@ -441,12 +481,15 @@ export class CaptureController {
     let source: MediaStreamAudioSourceNode | null = null;
     let analyser: AnalyserNode | null = null;
     let localLease: CaptureLease | null = null;
+    let releaseSession: (() => void) | null = null;
     const current = () => epoch === this.epoch && this.desired && !this.disposed;
     onStatus(
       'waiting',
       'Preparing audio and waiting for microphone permission. You can cancel this request.',
     );
     try {
+      releaseSession = this.engine.acquireCaptureSession();
+      this.releaseSession = releaseSession;
       const ready = this.engine.prepare();
       await ready;
       if (!current()) return;
@@ -500,6 +543,8 @@ export class CaptureController {
           safely(() => node.disconnect());
           safely(() => detector.disconnect());
           tracks.forEach((track) => safely(() => track.stop()));
+          if (this.releaseSession === releaseSession) this.releaseSession = null;
+          releaseSession?.();
         },
       };
       localLease = lease;
@@ -608,6 +653,10 @@ export class CaptureController {
       if (candidate) candidate.getTracks().forEach((track) => safely(() => track.stop()));
       if (source) safely(() => source?.disconnect());
       if (analyser) safely(() => analyser?.disconnect());
+      if (this.lease?.epoch !== epoch) {
+        if (this.releaseSession === releaseSession) this.releaseSession = null;
+        releaseSession?.();
+      }
     }
   }
   private interrupt(epoch: number, message: string) {
@@ -624,6 +673,9 @@ export class CaptureController {
     this.desired = false;
     this.lease?.dispose();
     this.lease = null;
+    const release = this.releaseSession;
+    this.releaseSession = null;
+    release?.();
     this.onSample?.(null, performance.now());
     this.onStatus?.('off', 'Microphone off.');
     this.onSample = null;

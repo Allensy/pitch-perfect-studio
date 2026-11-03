@@ -155,6 +155,12 @@ support. iPhone Safari, Android Chrome and desktop Safari still need device
 validation. There are no accounts, cloud sync, guided courses or native app
 packages.
 
+On browsers with the Audio Session API, the app requests media playback mode
+and restores it after microphone use. This is intended to avoid silent-switch
+muting and a persistent recording-mode volume drop on supported mobile browsers.
+The OS may still use a different volume level while the microphone is active.
+Browsers without this API may require turning silent mode off.
+
 The product began as a standalone HTML prototype. That comparison app has been
 retired; [archived planning documents](docs/archive/) retain historical
 requirements and proposed work, and are not a current feature or test-status

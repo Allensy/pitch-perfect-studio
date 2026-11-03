@@ -146,3 +146,33 @@ test('microphone denial explains recovery without fabricating live input', async
   await expect(page.locator('.capture-message')).toContainText(/permission|allow|blocked/i);
   await expect(page.locator('.pitch-note')).toHaveText('—');
 });
+
+test('optional mobile audio session returns to playback after denied capture', async ({ page }) => {
+  await page.addInitScript(() => {
+    const session = { type: 'auto' };
+    Object.defineProperty(navigator, 'audioSession', { value: session, configurable: true });
+    Object.defineProperty(navigator.mediaDevices, 'getUserMedia', {
+      value: () => {
+        if (session.type !== 'play-and-record')
+          throw new Error('Recording session must precede the permission request.');
+        return Promise.reject(new DOMException('Permission denied', 'NotAllowedError'));
+      },
+    });
+  });
+  await page.goto('/');
+  const audioMode = () =>
+    page.evaluate(
+      () => (navigator as Navigator & { audioSession: { type: string } }).audioSession.type,
+    );
+  expect(await audioMode()).toBe('auto');
+  await page.getByRole('button', { name: 'Play note', exact: true }).click();
+  expect(await audioMode()).toBe('playback');
+  await page.getByRole('tab', { name: 'Tuner', exact: true }).click();
+  await page.getByRole('button', { name: 'Start microphone', exact: true }).click();
+  await expect(page.locator('.capture-message')).toContainText('permission was denied');
+  expect(await audioMode()).toBe('playback');
+  await page.getByRole('tab', { name: 'Notes', exact: true }).click();
+  await page.getByRole('button', { name: 'Play note', exact: true }).click();
+  await expect(page.getByText('What did you hear? Choose your answer.')).toBeVisible();
+  expect(await audioMode()).toBe('playback');
+});

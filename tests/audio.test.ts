@@ -503,3 +503,164 @@ describe('pitch detector', () => {
     expect(detectPitch(noise, 96000, 60, 1200)).toBeNull();
   });
 });
+
+// Mobile audio-session routing: these mocks verify policy/lifecycle, not iPhone loudness.
+describe('mobile playback and microphone audio sessions', () => {
+  const config = { a4: 440, lowMidi: 48, highMidi: 72 };
+  function sessionWith(getUserMedia = vi.fn()) {
+    const session = { type: 'auto' };
+    vi.stubGlobal('navigator', { audioSession: session, mediaDevices: { getUserMedia } });
+    return session;
+  }
+  it('requests media playback on intentional sound, keeps output settings and releases the session on disposal', async () => {
+    const session = sessionWith();
+    const engine = new AudioEngine();
+    expect(session.type).toBe('auto');
+    engine.setOutput(37, true);
+    expect(session.type).toBe('auto');
+    await engine.prepare();
+    expect(session.type).toBe('playback');
+    expect(Context.instances[0]!.gains[0]!.gain.setTargetAtTime).toHaveBeenLastCalledWith(
+      0,
+      0,
+      0.012,
+    );
+    engine.dispose();
+    expect(session.type).toBe('auto');
+  });
+  it('enters recording mode before requesting the mic and restores playback after tracks stop', async () => {
+    const input = stream();
+    const getUserMedia = vi.fn(async () => {
+      expect(session.type).toBe('play-and-record');
+      return input.media;
+    });
+    const session = sessionWith(getUserMedia);
+    const engine = new AudioEngine(),
+      capture = new CaptureController(engine);
+    await engine.prepare();
+    await capture.start(vi.fn(), vi.fn(), config);
+    await engine.prepare(); // A cue during capture must retain duplex mode.
+    expect(session.type).toBe('play-and-record');
+    input.track.stop.mockImplementation(() => {
+      expect(session.type).toBe('play-and-record');
+      input.track.readyState = 'ended';
+    });
+    capture.stop();
+    expect(input.track.stop).toHaveBeenCalledTimes(1);
+    expect(session.type).toBe('playback');
+    expect(Context.instances).toHaveLength(1);
+    capture.dispose();
+    engine.dispose();
+  });
+  for (const reason of ['denial', 'graph failure', 'track interruption']) {
+    it(`restores playback on ${reason}`, async () => {
+      const input = stream();
+      const session = sessionWith(
+        vi
+          .fn()
+          .mockImplementation(() =>
+            reason === 'denial'
+              ? Promise.reject(new DOMException('Denied', 'NotAllowedError'))
+              : Promise.resolve(input.media),
+          ),
+      );
+      Context.failAnalyser = reason === 'graph failure';
+      const engine = new AudioEngine(),
+        capture = new CaptureController(engine);
+      await capture.start(vi.fn(), vi.fn(), config);
+      if (reason === 'track interruption') input.track.dispatchEvent(new Event('mute'));
+      expect(session.type).toBe('playback');
+      if (reason !== 'denial') expect(input.track.stop).toHaveBeenCalledTimes(1);
+      capture.dispose();
+      engine.dispose();
+    });
+  }
+  it('cancels a pending permission request and repairs a late grant without reopening the tab', async () => {
+    const pending = deferred<MediaStream>(),
+      input = stream();
+    const session = sessionWith(vi.fn().mockReturnValue(pending.promise));
+    const engine = new AudioEngine(),
+      capture = new CaptureController(engine);
+    const request = capture.start(vi.fn(), vi.fn(), config);
+    await flush();
+    capture.stop();
+    expect(session.type).toBe('playback');
+    session.type = 'play-and-record'; // Browser switches routes when the late grant resolves.
+    pending.resolve(input.media);
+    await request;
+    expect(input.track.stop).toHaveBeenCalledTimes(1);
+    expect(session.type).toBe('playback');
+    capture.dispose();
+    engine.dispose();
+  });
+  it('does not let an old permission result reset a newer capture session', async () => {
+    const pending = deferred<MediaStream>(),
+      old = stream(),
+      current = stream();
+    const session = sessionWith(
+      vi.fn().mockReturnValueOnce(pending.promise).mockResolvedValueOnce(current.media),
+    );
+    const engine = new AudioEngine(),
+      capture = new CaptureController(engine);
+    const request = capture.start(vi.fn(), vi.fn(), config);
+    await flush();
+    capture.stop();
+    await capture.start(vi.fn(), vi.fn(), config);
+    pending.resolve(old.media);
+    await request;
+    expect(old.track.stop).toHaveBeenCalledTimes(1);
+    expect(current.track.stop).not.toHaveBeenCalled();
+    expect(session.type).toBe('play-and-record');
+    capture.stop();
+    expect(session.type).toBe('playback');
+    capture.dispose();
+    engine.dispose();
+  });
+  it('restores playback when cancelled during audio preparation before requesting permission', async () => {
+    const ready = deferred<void>(),
+      getUserMedia = vi.fn();
+    const session = sessionWith(getUserMedia);
+    Context.state = 'suspended';
+    Context.readiness = ready.promise;
+    const engine = new AudioEngine(),
+      capture = new CaptureController(engine);
+    const request = capture.start(vi.fn(), vi.fn(), config);
+    capture.stop();
+    expect(session.type).toBe('playback');
+    ready.resolve();
+    await request;
+    expect(getUserMedia).not.toHaveBeenCalled();
+    expect(session.type).toBe('playback');
+    capture.dispose();
+    engine.dispose();
+  });
+  for (const failure of ['getter', 'setter']) {
+    it(`keeps audio/capture usable when the optional session ${failure} throws`, async () => {
+      const input = stream(),
+        session = {};
+      Object.defineProperty(session, 'type', {
+        get() {
+          if (failure === 'getter') throw new Error('Unsupported');
+          return 'auto';
+        },
+        set() {
+          throw new Error('Unsupported');
+        },
+      });
+      vi.stubGlobal('navigator', {
+        audioSession: session,
+        mediaDevices: { getUserMedia: vi.fn().mockResolvedValue(input.media) },
+      });
+      const engine = new AudioEngine(),
+        capture = new CaptureController(engine),
+        status = vi.fn();
+      await engine.prepare();
+      await capture.start(vi.fn(), status, config);
+      expect(status).toHaveBeenLastCalledWith('listening', expect.any(String));
+      capture.stop();
+      expect(input.track.stop).toHaveBeenCalledTimes(1);
+      capture.dispose();
+      engine.dispose();
+    });
+  }
+});
