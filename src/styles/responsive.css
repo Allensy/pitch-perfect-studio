@@ -1,0 +1,667 @@
+@media (max-width: 1199px) {
+  .page-content {
+    padding: 30px 28px 48px;
+  }
+  .page-heading h1 {
+    font-size: 42px;
+  }
+  .practice-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .context-rail {
+    display: none;
+  }
+  .mobile-help {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 24px;
+    margin-top: 28px;
+  }
+  .mobile-help .rail-section {
+    margin: 0;
+    border: 0;
+  }
+  .header-summary {
+    display: none;
+  }
+  .voice-lanes {
+    gap: 14px;
+  }
+  .voice-lane {
+    padding: 18px;
+  }
+  .voice-pitch {
+    font-size: 38px;
+  }
+}
+@media (max-width: 767px) {
+  body {
+    font-size: 14px;
+  }
+  .app-header {
+    padding: 13px 18px;
+    gap: 10px;
+  }
+  .brand {
+    gap: 9px;
+  }
+  .beat-mark {
+    width: 23px;
+    gap: 3px;
+  }
+  .beat-mark i {
+    width: 3px;
+  }
+  .brand-name {
+    font-size: 14px;
+  }
+  .brand-caption {
+    font-size: 7px;
+    letter-spacing: 0.12em;
+  }
+  .header-actions {
+    gap: 8px;
+  }
+  .header-actions > .button {
+    font-size: 12px;
+    padding: 9px 11px;
+  }
+  .capture-indicator {
+    display: none;
+  }
+  .mode-nav {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 50;
+    display: grid;
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    gap: 0;
+    padding: 5px 4px calc(6px + env(safe-area-inset-bottom, 0px));
+    border-top: 1px solid var(--border);
+    border-bottom: 0;
+  }
+  .mode-button {
+    padding: 7px 2px;
+    min-height: 58px;
+    flex-direction: column;
+    gap: 5px;
+    font-size: 10px;
+    min-width: 0;
+  }
+  .mode-button[data-state='active'] {
+    background: var(--card);
+    border-radius: 9px;
+  }
+  .mode-button[data-state='active']:after {
+    display: none;
+  }
+  .page-content {
+    padding: 24px 18px calc(112px + env(safe-area-inset-bottom, 0px));
+  }
+  .page-content.has-capture {
+    padding-bottom: calc(184px + env(safe-area-inset-bottom, 0px));
+  }
+  .page-heading {
+    margin-bottom: 13px;
+    gap: 8px;
+  }
+  .page-heading h1 {
+    font-size: 32px;
+  }
+  .eyebrow {
+    font-size: 9px;
+    letter-spacing: 0.12em;
+    margin-bottom: 9px;
+  }
+  .intro {
+    font-size: 13px;
+    line-height: 1.6;
+    margin-top: 11px;
+  }
+  .page-heading > .practice-tag {
+    display: none;
+  }
+  .compact-summary {
+    display: block;
+    color: var(--muted-foreground);
+    font-size: 11px;
+    line-height: 1.6;
+    margin-bottom: 18px;
+  }
+  .sound-stage {
+    padding: 16px;
+    border-radius: 16px;
+  }
+  .stage-meta {
+    font-size: 10px;
+    letter-spacing: 0;
+    gap: 6px;
+  }
+  .signal {
+    height: 60px;
+    gap: 4px;
+    margin: 16px auto;
+  }
+  .signal i {
+    width: 3px;
+    transform: scaleY(0.8);
+  }
+  .stage-status {
+    font-size: 12px;
+  }
+  .reference-row {
+    gap: 16px;
+    margin: 9px 0;
+  }
+  .reference-row .button {
+    font-size: 12px;
+  }
+  .section-heading {
+    margin: 12px 0 10px;
+  }
+  .section-heading h2 {
+    font-size: 13px;
+  }
+  .notes-grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+  .answer-key {
+    min-height: 65px;
+    padding: 8px 4px;
+  }
+  .answer-key > span {
+    font-size: 22px;
+  }
+  .answer-key > small {
+    font-size: 11px;
+  }
+  .quiz-active .sound-stage {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 4px 10px;
+    padding: 10px 12px;
+  }
+  .quiz-active .signal {
+    display: none;
+  }
+  .quiz-active .stage-meta {
+    display: block;
+    text-align: left;
+    grid-row: 1;
+    grid-column: 1;
+    font-size: 11px;
+  }
+  .quiz-active .stage-meta > span:last-child {
+    display: none;
+  }
+  .quiz-active .stage-action {
+    grid-row: 1 / span 2;
+    grid-column: 2;
+    min-width: 108px;
+    min-height: 44px;
+    font-size: 12px;
+    padding: 9px 12px;
+  }
+  .quiz-active .stage-status {
+    grid-row: 2;
+    grid-column: 1;
+    margin: 0;
+    text-align: left;
+    font-size: 11px;
+    line-height: 1.4;
+  }
+  .quiz-active .notes-grid {
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+    gap: 6px;
+  }
+  .quiz-active .notes-grid .answer-key {
+    min-height: 56px;
+    padding: 6px 2px;
+    border-radius: 9px;
+  }
+  .quiz-active .notes-grid .answer-key > span {
+    font-size: 18px;
+  }
+  .quiz-active .notes-grid .answer-key > small {
+    font-size: 10px;
+  }
+  .intervals-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+  .intervals-grid .answer-key {
+    min-height: 72px;
+  }
+  .chord-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+  .chord-grid .answer-key > small {
+    font-size: 10px;
+  }
+  .feedback {
+    padding: 9px 12px;
+    min-height: 72px;
+    margin-top: 14px;
+    gap: 10px;
+  }
+  .feedback strong {
+    font-size: 13px;
+  }
+  .feedback p {
+    font-size: 12px;
+  }
+  .next-row {
+    gap: 8px;
+  }
+  .exact-entry {
+    gap: 8px;
+  }
+  .exact-entry > label {
+    min-width: 75px;
+  }
+  .exact-entry .button {
+    flex: 1;
+    min-width: 100px;
+    font-size: 12px;
+  }
+  .exact-entry select {
+    font-size: 16px;
+  }
+  .inversion-options {
+    gap: 6px;
+  }
+  .choice {
+    font-size: 11px;
+    padding: 8px;
+  }
+  .piano-tools {
+    gap: 9px;
+  }
+  .piano-tools .segmented .button {
+    font-size: 11px;
+    padding: 8px 10px;
+  }
+  .octave-controls {
+    gap: 6px;
+  }
+  .piano-disclosure summary > span {
+    display: none;
+  }
+  .anchor-list {
+    grid-template-columns: 1fr;
+  }
+  .mobile-help {
+    display: block;
+    margin-top: 24px;
+  }
+  .mobile-help .rail-section {
+    padding: 18px 0;
+    border-top: 1px solid var(--border);
+  }
+  .mobile-help .rail-section summary {
+    font-size: 11px;
+  }
+  .rail-note {
+    font-size: 22px;
+  }
+  .mode-switch-row {
+    gap: 8px;
+    margin-bottom: 14px;
+  }
+  .mode-switch-row > .button {
+    font-size: 11px;
+  }
+  .segmented .button {
+    font-size: 11px;
+    padding: 8px 10px;
+  }
+  .drill-row {
+    gap: 10px;
+    margin: 14px 0;
+  }
+  .drill-row > label {
+    font-size: 11px;
+    min-width: 125px;
+  }
+  .drill-row select {
+    font-size: 16px;
+  }
+  .tuner-well {
+    padding: 16px;
+    border-radius: 16px;
+  }
+  .tuner-top {
+    font-size: 11px;
+    gap: 8px;
+    margin-bottom: 14px;
+  }
+  .tuner-top strong {
+    font-size: 17px;
+  }
+  .mic-buttons {
+    gap: 9px;
+  }
+  .mic-buttons .button {
+    font-size: 12px;
+    flex: 1;
+    padding: 10px;
+  }
+  .capture-message {
+    font-size: 12px;
+  }
+  .pitch-reading {
+    padding: 22px 0 18px;
+  }
+  .pitch-note {
+    font-size: 68px;
+  }
+  .pitch-reading p,
+  .pitch-meaning {
+    font-size: 12px;
+  }
+  .meter-labels {
+    font-size: 11px;
+  }
+  .tolerance-copy {
+    font-size: 12px;
+  }
+  .hold {
+    margin: 20px 0;
+  }
+  .hold > div:first-child {
+    font-size: 11px;
+    gap: 8px;
+  }
+  .hold strong {
+    max-width: 26ch;
+  }
+  .pitch-chart figcaption,
+  .chart-axis {
+    font-size: 11px;
+  }
+  .chart-note {
+    font-size: 10px;
+  }
+  .pitch-chart svg {
+    height: 95px;
+  }
+  .queue .button {
+    font-size: 12px;
+    padding: 10px;
+  }
+  .harmony-context {
+    gap: 8px;
+  }
+  .harmony-context span {
+    font-size: 11px;
+  }
+  .harmony-context strong {
+    font-size: 18px;
+  }
+  .harmony-context > div {
+    gap: 5px;
+  }
+  .harmony-switch {
+    width: 100%;
+    display: flex;
+  }
+  .harmony-switch > .button {
+    flex: 1;
+  }
+  .mixer-guidance {
+    font-size: 25px;
+  }
+  .progression-steps {
+    gap: 6px;
+  }
+  .progression-step {
+    padding: 9px;
+  }
+  .progression-step strong {
+    font-size: 12px;
+  }
+  .voice-lanes {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+  .voice-lane {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 12px;
+    align-items: center;
+    padding: 16px;
+  }
+  .voice-name {
+    display: flex;
+    justify-content: flex-start;
+    gap: 12px;
+  }
+  .voice-name h3 {
+    font-size: 14px;
+  }
+  .voice-pitch {
+    font-size: 32px;
+    margin: 0;
+    text-align: right;
+  }
+  .voice-lane .button {
+    font-size: 12px;
+    width: 100%;
+    min-height: 44px;
+  }
+  .voice-lane .button-ghost {
+    justify-content: flex-end;
+  }
+  .mobile-capture {
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: calc(69px + env(safe-area-inset-bottom, 0px));
+    z-index: 49;
+    background: var(--secondary);
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+    padding: 9px 16px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+    font-size: 11px;
+    color: var(--ring);
+    min-height: 62px;
+  }
+  .mobile-capture .button {
+    font-size: 11px;
+    white-space: nowrap;
+    padding: 8px 12px;
+  }
+  .setup-dialog {
+    top: auto;
+    right: 0;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    max-width: none;
+    max-height: 95dvh;
+    height: auto;
+    border-radius: 20px 20px 0 0;
+    border-bottom: 0;
+  }
+  .dialog-heading {
+    padding: 22px 20px 18px;
+    padding-right: 70px;
+  }
+  .dialog-heading h2 {
+    font-size: 30px;
+  }
+  .dialog-heading p {
+    font-size: 12px;
+  }
+  .dialog-body {
+    padding: 20px;
+    max-height: calc(95dvh - 174px);
+  }
+  .dialog-footer {
+    padding: 14px 20px calc(14px + env(safe-area-inset-bottom, 0px));
+    gap: 10px;
+  }
+  .dialog-footer > .button {
+    flex: 1;
+  }
+  .form-grid {
+    gap: 14px;
+  }
+  .field > input,
+  .field > select {
+    font-size: 16px;
+  }
+  .field {
+    font-size: 12px;
+  }
+  .filter-grid {
+    grid-template-columns: 1fr;
+  }
+  .filter-grid .check-label {
+    font-size: 12px;
+  }
+  .preset-buttons .button {
+    font-size: 12px;
+  }
+  .dialog-capture {
+    gap: 10px;
+  }
+  .immediate-label {
+    max-width: 18ch;
+    text-align: right;
+    font-size: 10px;
+  }
+  .dialog-footnote {
+    font-size: 12px;
+  }
+  .dialog-close {
+    right: 12px;
+    top: 12px;
+  }
+  .confirm-dialog {
+    padding: 24px;
+    max-height: calc(100dvh - 24px);
+  }
+  .confirm-dialog h2 {
+    font-size: 28px;
+  }
+  .progress-breakdown > div {
+    font-size: 12px;
+  }
+  .progress-totals span {
+    font-size: 11px;
+  }
+  .mastery-grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+  .mastery-grid small {
+    font-size: 10px;
+  }
+}
+@media (max-width: 350px) {
+  .page-content {
+    padding-left: 13px;
+    padding-right: 13px;
+  }
+  .app-header {
+    padding-left: 13px;
+    padding-right: 13px;
+  }
+  .brand-name span {
+    display: block;
+    font-size: 9px;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+  }
+  .brand-caption {
+    display: none;
+  }
+  .brand-name {
+    font-size: 13px;
+  }
+  .page-heading h1 {
+    font-size: 30px;
+  }
+  .reference-row {
+    gap: 12px;
+  }
+  .reference-row .button {
+    font-size: 11px;
+  }
+  .form-grid {
+    grid-template-columns: 1fr;
+  }
+  .dialog-body {
+    padding: 16px;
+  }
+  .dialog-heading {
+    padding-left: 16px;
+  }
+  .output-row {
+    gap: 6px;
+  }
+  .output-row .button {
+    font-size: 11px;
+  }
+  .drill-row > label {
+    min-width: 110px;
+  }
+  .pitch-note {
+    font-size: 60px;
+  }
+  .harmony-context strong {
+    font-size: 16px;
+  }
+  .choice {
+    font-size: 10px;
+  }
+  .progression-step {
+    padding: 8px 5px;
+  }
+  .progression-step strong {
+    font-size: 11px;
+  }
+}
+@media (max-height: 440px) and (max-width: 767px) {
+  .mode-button {
+    min-height: 44px;
+    flex-direction: row;
+    font-size: 10px;
+    gap: 4px;
+  }
+  .mode-icon {
+    width: 17px;
+    height: 17px;
+  }
+  .mobile-capture {
+    bottom: calc(55px + env(safe-area-inset-bottom, 0px));
+  }
+  .setup-dialog {
+    max-height: 98dvh;
+  }
+  .dialog-body {
+    max-height: calc(98dvh - 158px);
+  }
+  .dialog-heading {
+    padding-top: 14px;
+    padding-bottom: 14px;
+  }
+  .dialog-heading h2 {
+    font-size: 25px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *:before,
+  *:after {
+    animation: none !important;
+    transition: none !important;
+    scroll-behavior: auto !important;
+  }
+}

@@ -1,4 +1,12 @@
-import type { Settings, ScaleId, QualityId, ChallengeId, ProgressionId, Result } from './types';
+import type {
+  Settings,
+  PitchNotation,
+  ScaleId,
+  QualityId,
+  ChallengeId,
+  ProgressionId,
+  Result,
+} from './types';
 
 export const NOTE_NAMES = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B'];
 export const NOTE_DISPLAY = [
@@ -316,7 +324,7 @@ export function noteName(midi: number): string {
   const note = Math.round(midi);
   return `${NOTE_DISPLAY[((note % 12) + 12) % 12]?.split('/')[0] ?? '—'}${Math.floor(note / 12) - 1}`;
 }
-export function pitchLabel(midi: number, settings: Settings): string {
+export function pitchLabel(midi: number, settings: { global: PitchNotation }): string {
   if (settings.global.notation === 'letter') return noteName(midi);
   const degree = (((Math.round(midi) - settings.global.rootKey) % 12) + 12) % 12;
   const label =

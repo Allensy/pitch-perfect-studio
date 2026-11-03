@@ -53,6 +53,8 @@ export interface Settings {
   };
   piano: { inputMode: 'audition' | 'answer'; octave: number };
 }
+export type PitchNotation = Pick<Settings['global'], 'rootKey' | 'notation'>;
+
 export interface NoteQuestion {
   kind: 'notes';
   midi: number;
