@@ -67,6 +67,17 @@ hardware results from mocked or simulated input.
 
 ## Open a pull request
 
+`main` requires a pull request, a passing and up-to-date `validate` check from
+GitHub Actions, resolved review conversations, and approval from `@Allensy`,
+the code owner for every file. New changes dismiss earlier approvals. These
+rules apply to administrators too; direct pushes, force pushes and deletion
+are blocked. Other reviewers cannot substitute for the code owner's approval.
+
+GitHub does not allow authors to approve their own pull requests. With this
+strict single-owner policy, PRs authored by Allensy cannot satisfy the required
+review without an explicit change to the review policy. Do not bypass or
+temporarily disable protection to merge a change.
+
 Explain the problem, resulting behavior, relevant requirement or issue, and
 validation performed. Include screenshots for visible changes and call out
 remaining device checks. Do not commit local certificates, private keys,

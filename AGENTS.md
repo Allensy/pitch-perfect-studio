@@ -56,6 +56,13 @@ relevant requirement identifiers in implementation handoffs.
 
 ## Conventions
 
+- `main` is protected. Make changes on a topic branch and open a pull request;
+  never push directly to `main`, disable protection, or bypass required reviews.
+  Leave approval reviews to the human owner, `@Allensy`; do not submit an
+  approval using the owner's credentials. Strict protection includes admins.
+  GitHub forbids self-approval, so PRs authored through Allensy's account remain
+  blocked until the owner explicitly chooses a different review policy.
+
 - Use React, strict TypeScript, Vite, Tailwind CSS, owned Radix-backed components
   and Motion. Preserve Web Audio services and pure music rules outside React
   rendering; avoid broad renders for live pitch samples.
