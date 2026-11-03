@@ -57,11 +57,13 @@ relevant requirement identifiers in implementation handoffs.
 ## Conventions
 
 - `main` is protected. Make changes on a topic branch and open a pull request;
-  never push directly to `main`, disable protection, or bypass required reviews.
-  Leave approval reviews to the human owner, `@Allensy`; do not submit an
-  approval using the owner's credentials. Strict protection includes admins.
-  GitHub forbids self-approval, so PRs authored through Allensy's account remain
-  blocked until the owner explicitly chooses a different review policy.
+  never push directly to `main` or disable protection. Leave approval reviews
+  to the human owner, `@Allensy`; do not submit an approval using the owner's
+  credentials. Only Allensy has a PR-only review bypass, permitting owner-authored
+  PRs to merge without self-approval. Required CI, up-to-date branches, resolved
+  conversations, and force-push/deletion protections still apply to the owner.
+  Use the owner bypass to merge only when the current user request authorizes
+  that merge; do not use it to bypass review of unrelated changes.
 
 - Use React, strict TypeScript, Vite, Tailwind CSS, owned Radix-backed components
   and Motion. Preserve Web Audio services and pure music rules outside React

@@ -68,15 +68,15 @@ hardware results from mocked or simulated input.
 ## Open a pull request
 
 `main` requires a pull request, a passing and up-to-date `validate` check from
-GitHub Actions, resolved review conversations, and approval from `@Allensy`,
-the code owner for every file. New changes dismiss earlier approvals. These
-rules apply to administrators too; direct pushes, force pushes and deletion
-are blocked. Other reviewers cannot substitute for the code owner's approval.
+GitHub Actions, and resolved review conversations. Direct pushes, force pushes
+and deletion are blocked, including for administrators.
 
-GitHub does not allow authors to approve their own pull requests. With this
-strict single-owner policy, PRs authored by Allensy cannot satisfy the required
-review without an explicit change to the review policy. Do not bypass or
-temporarily disable protection to merge a change.
+An active review ruleset requires approval from `@Allensy`, the code owner for
+every file. New changes dismiss earlier approvals. Other reviewers cannot
+substitute for the code owner's approval. Only Allensy has a review bypass,
+restricted to merging through a pull request. It allows the owner to merge
+their own PRs, since GitHub forbids self-approval; required CI and the other
+branch protections still apply. Do not disable protection to merge a change.
 
 Explain the problem, resulting behavior, relevant requirement or issue, and
 validation performed. Include screenshots for visible changes and call out
