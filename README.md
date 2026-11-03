@@ -124,13 +124,16 @@ See [CONTRIBUTING.md](CONTRIBUTING.md) for the development workflow,
 
 ```text
 src/
+  app/                Shell, navigation and error boundary
+  features/           Focused panels, local form hooks and presentation models
   domain/             Music vocabulary, generation and grading
   components/         Shared controls and contextual help
   audio.ts            Synthesis, playback and microphone capture
   runtime.ts          Exercise lifecycle and scoring
   persistence.ts      Validated settings and progress storage
-  App.tsx             Practice interface
-  styles.css          Theme and responsive layouts
+  App.tsx             Composition entry
+  styles.css          Ordered stylesheet imports
+  styles/             Theme, feature styles and responsive layouts
 tests/                Unit and service regressions
 e2e/                  Browser scenarios
 docs/archive/         Historical product, UX and technical design documents

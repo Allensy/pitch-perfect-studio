@@ -1,5 +1,69 @@
 # Architecture
 
+## Frontend refactor working criteria
+
+This structural refactor follows the user's code-quality review. It preserves
+existing visuals and musical behavior rather than introducing product changes.
+
+- REF-01: App is a composition entry; shell, Setup, quizzes, piano, vocal practice
+  and progress have focused modules with explicit dependencies.
+- REF-02: Repeated select/checkbox controls use typed shared primitives;
+  primitives retain native semantics, labels, focus behavior and existing styles.
+- REF-03: Setup draft editing, validation/presets and per-mode sections are
+  separated from dialog composition. Cancel/Apply and immediate output keep
+  their current semantics.
+- REF-04: Quiz entry state is local to its answer form. Reusable musical
+  formatting and preset rules are testable outside JSX; grading stays in domain
+  services and runtime.
+- REF-05: Live pitch remains subscribed only by its display. Audio/session
+  ownership, scoring, persistence and resource cancellation remain outside React.
+- REF-06: Existing 118 service/domain tests and 16 browser scenarios keep passing;
+  focused tests cover extracted state/formatting contracts. Check responsive
+  screenshots and keyboard/dialog behavior against the pre-refactor baseline.
+
+Implemented on the refactor branch: App is a 17-line composition entry; the
+Setup dialog is 155 lines and the quiz panel is 117 lines. Local validation:
+150 unit/service/hook tests and 20 browser scenarios pass, alongside strict
+types, lint, formatting and the production build. The compiled CSS hash is
+unchanged. Phone/desktop screenshots were inspected against the baseline;
+animated feedback opacity makes immediate-load screenshots non-identical.
+Review and merge remain separate from this local verification. Real-device
+audio validation is not claimed by this structural change.
+
+## Frontend ownership
+
+- `src/app/`: shell composition, navigation, heading, and error boundary. Studio
+  owns the application snapshot subscription and Setup opener focus capture.
+- `src/components/ui/`: shared buttons, dialogs, labeled typed native selects,
+  and checkbox controls. Native event conversion is implemented once; callers
+  receive declared option values rather than casting arbitrary strings.
+- `src/components/audio/`: output controls and capture status, with narrow props
+  and callbacks to the runtime. Shared option labels live in `practice-options.ts`.
+- `src/features/setup/`: dialog composition, independent per-mode settings
+  sections, and a transactional draft hook. Pure presets/candidate preparation
+  live in `domain/settings-presets.ts`; runtime remains the authoritative validator.
+- `src/features/quiz/`: common playback/feedback composition, independent note,
+  interval and chord answer forms, shared answer tiles and interval guide.
+  Entry preparation and submitted-answer formatting are pure helpers. Forms
+  reset at the round identity boundary; retries retain local entries.
+- `src/features/piano/`: instrument controls and a pure key-layout/eligibility
+  model. Auditions and answer submissions call separate runtime commands.
+- `src/features/vocal/`: Harmony target/mixer/help, tuner controls, and pitch
+  display. Only PitchDisplay subscribes to live samples; chart and hold UI
+  receive derived props. Pitch-history geometry and reading descriptions are
+  pure presentation helpers, not grading decisions.
+- `src/features/progress/`: summary calculations, reset transaction hook,
+  confirmation dialog and progress presentation. Context copy lives separately
+  in `features/context/`.
+- `src/styles/`: foundation, shell, training, vocal, progress, dialog and
+  responsive rules. `styles.css` is an ordered import entry; preserve import
+  order because existing responsive/refinement rules intentionally override base rules.
+
+Feature components own transient form state; persistent settings, scores,
+capture and playback remain runtime-owned. Do not create a second settings
+store inside a control or move resource lifetimes into rendering. ESLint rejects
+React/UI imports from domain and service-owner modules.
+
 Pitch Perfect Studio is a static, client-side React application. Vite serves and
 builds the app; strict TypeScript, Tailwind CSS, owned Radix-backed UI components
 and Motion provide the interface. There is no backend, account system, analytics
@@ -16,8 +80,8 @@ or recording upload.
 - `src/store.ts`: immutable external-store snapshots. Live pitch has a separate
   subscription so samples do not cause whole-app renders.
 - `src/persistence.ts`: validated local progress, migration and save recovery.
-- `src/App.tsx`, `src/components/`, `src/styles.css`: responsive practice modes,
-  shared Setup, accessible dialogs, instrument keyboard and pitch HUD.
+- `src/App.tsx`, `src/app/`, `src/features/`, `src/components/`, `src/styles/`:
+  composition, responsive feature UI, shared native controls and styles.
 - `tests/`, `e2e/`: domain/service/runtime regressions and Chromium user flows.
 
 Audio services are owned outside React rendering. Audio and microphone access

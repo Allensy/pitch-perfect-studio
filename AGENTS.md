@@ -6,8 +6,11 @@ microphone pitch matching. Imported from the user's standalone HTML prototype.
 ## Structure
 
 - `index.html`: Vite entry for the React application.
-- `src/App.tsx`, `src/components/`, `src/styles.css`: interface, shared controls,
-  theme and responsive layouts.
+- `src/App.tsx`, `src/app/`: composition, shell, navigation and error boundary.
+- `src/features/`: focused practice panels, per-mode settings sections,
+  transactional form hooks and pure presentation models.
+- `src/components/`: shared native controls, dialogs, audio controls and option labels.
+- `src/styles.css`, `src/styles/`: ordered styles, theme and responsive layouts.
 - `src/domain/`: pure typed music rules, vocabulary, generation and grading.
 - `src/audio.ts`: Web Audio synthesis, playback and microphone resource ownership.
 - `src/runtime.ts`, `src/store.ts`: application lifecycle and immutable stores.
@@ -68,6 +71,11 @@ relevant requirement identifiers in implementation handoffs.
 - Use React, strict TypeScript, Vite, Tailwind CSS, owned Radix-backed components
   and Motion. Preserve Web Audio services and pure music rules outside React
   rendering; avoid broad renders for live pitch samples.
+- Keep App as composition and feature components focused on one task. Reuse
+  SelectField/CheckField for native form controls and the shared option catalogs;
+  avoid duplicate enum casts, preset rules and answer preparation in JSX.
+  Keep music/scoring rules in domain/runtime and presentation calculations in
+  pure feature models. ESLint enforces that domain/service owners cannot import UI.
 - Preserve all existing modes and migration from `pitch_perfect_studio_v1` to
   `pitch_perfect_studio_v2`. Normal practice must not alter legacy history.
 - Skips and simulated microphone input must never earn XP or change accuracy.

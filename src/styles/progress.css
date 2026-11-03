@@ -1,0 +1,65 @@
+.progress-section details details {
+  margin: 12px 0;
+}
+.progress-totals {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+  margin: 12px 0;
+}
+.progress-totals > div {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+.progress-totals strong {
+  font:
+    24px Consolas,
+    monospace;
+}
+.progress-totals span {
+  font-size: 10px;
+  color: var(--muted-foreground);
+}
+.progress-breakdown {
+  display: grid;
+  gap: 13px;
+  margin: 16px 0;
+}
+.progress-breakdown > div {
+  font-size: 11px;
+}
+.progress-breakdown dt {
+  font-weight: 650;
+}
+.progress-breakdown dd {
+  margin: 3px 0 0;
+  color: var(--muted-foreground);
+  line-height: 1.6;
+}
+.mastery-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 8px;
+  margin: 12px 0;
+}
+.mastery-grid > div {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 10px 5px;
+  background: var(--card);
+  border-radius: 8px;
+  text-align: center;
+}
+.mastery-grid strong {
+  font-size: 12px;
+}
+.mastery-grid span {
+  font-size: 11px;
+  color: var(--primary);
+}
+.mastery-grid small {
+  font-size: 9px;
+  color: var(--muted-foreground);
+}

@@ -8,4 +8,40 @@ export default tseslint.config(
     files: ['**/*.{ts,tsx}'],
     rules: { '@typescript-eslint/no-unused-vars': ['error', { argsIgnorePattern: '^_' }] },
   },
+  {
+    files: [
+      'src/domain/**/*.{ts,tsx}',
+      'src/audio.ts',
+      'src/runtime.ts',
+      'src/persistence.ts',
+      'src/store.ts',
+    ],
+    rules: {
+      'no-restricted-imports': [
+        'error',
+        {
+          patterns: [
+            {
+              group: [
+                'react',
+                'react/*',
+                '@radix-ui/*',
+                'motion/*',
+                '@/app/**',
+                '@/components/**',
+                '@/features/**',
+                './app/**',
+                './components/**',
+                './features/**',
+                '../app/**',
+                '../components/**',
+                '../features/**',
+              ],
+              message: 'Music rules and service owners must not depend on React or UI modules.',
+            },
+          ],
+        },
+      ],
+    },
+  },
 );

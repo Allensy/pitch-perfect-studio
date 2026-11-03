@@ -1,0 +1,218 @@
+.dialog-overlay {
+  position: fixed;
+  inset: 0;
+  background: #000a;
+  z-index: 70;
+  animation: overlay-in 160ms ease-out;
+}
+.dialog-content {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: min(460px, calc(100vw - 32px));
+  max-height: calc(100dvh - 32px);
+  overflow: auto;
+  z-index: 80;
+  background: var(--card);
+  color: var(--foreground);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 28px;
+  box-shadow: 0 24px 80px #0007;
+}
+.dialog-content [data-radix-dialog-title] {
+  font-family: Georgia, serif;
+}
+.dialog-close {
+  position: absolute;
+  right: 16px;
+  top: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  border: 0;
+  background: transparent;
+  color: var(--muted-foreground);
+  border-radius: 8px;
+}
+.dialog-close:hover {
+  background: var(--secondary);
+}
+.setup-dialog {
+  top: 16px;
+  bottom: 16px;
+  right: 16px;
+  left: auto;
+  transform: none;
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr) auto;
+  padding: 0;
+  width: 560px;
+  max-width: calc(100vw - 32px);
+  max-height: none;
+  overflow: hidden;
+}
+.dialog-heading {
+  padding: 26px 28px 22px;
+  border-bottom: 1px solid var(--border);
+  padding-right: 70px;
+}
+.dialog-heading h2 {
+  font:
+    32px/1.15 Georgia,
+    serif;
+  letter-spacing: -0.035em;
+}
+.dialog-heading p {
+  font-size: 13px;
+  color: var(--muted-foreground);
+  margin-top: 8px;
+}
+.dialog-body {
+  overflow-y: auto;
+  padding: 24px 28px;
+  overscroll-behavior: contain;
+}
+.dialog-footer {
+  padding: 16px 28px;
+  background: var(--card);
+  border-top: 1px solid var(--border);
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+}
+.setup-section {
+  border: 0;
+  border-bottom: 1px solid var(--border);
+  margin: 0 0 24px;
+  padding: 0 0 24px;
+  min-width: 0;
+}
+.setup-section > legend {
+  font-size: 13px;
+  font-weight: 700;
+  margin-bottom: 16px;
+}
+.setup-section h2 {
+  font-size: 13px;
+}
+.setup-section .section-heading {
+  margin: 0 0 6px;
+}
+.immediate-label {
+  font-size: 10px;
+  color: var(--ring);
+}
+.setup-section .output {
+  margin: 0;
+}
+.setup-section .output-row .button {
+  font-size: 12px;
+}
+.setup-section .output p {
+  font-size: 12px;
+}
+.dialog-capture {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  background: var(--secondary);
+  border-radius: 10px;
+  padding: 12px;
+  margin: 0 0 24px;
+}
+.dialog-capture strong {
+  font-size: 12px;
+  color: var(--ring);
+}
+.dialog-capture p {
+  font-size: 11px;
+  color: var(--muted-foreground);
+  margin-top: 4px;
+}
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+}
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  font-size: 12px;
+  color: var(--muted-foreground);
+  min-width: 0;
+}
+.field > input,
+.field > select {
+  color: var(--foreground);
+  font-size: 14px;
+}
+.setup-section > .field {
+  margin-bottom: 16px;
+}
+.check-list {
+  margin-top: 10px;
+}
+.filter-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 4px 10px;
+  margin-top: 14px;
+}
+.filter-grid .check-label {
+  font-size: 11px;
+  color: var(--foreground);
+}
+.preset-buttons {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-top: 16px;
+}
+.preset-buttons .button {
+  font-size: 11px;
+}
+.dialog-footnote {
+  font-size: 11px;
+  color: var(--muted-foreground);
+  line-height: 1.7;
+  margin-top: 22px;
+}
+.confirm-dialog h2 {
+  font:
+    28px Georgia,
+    serif;
+  letter-spacing: -0.025em;
+  margin-bottom: 12px;
+  padding-right: 24px;
+}
+.confirm-dialog > p {
+  font-size: 13px;
+  line-height: 1.7;
+  color: var(--muted-foreground);
+}
+.confirm-dialog .button-row {
+  margin-top: 24px;
+}
+.error-page {
+  padding: 48px 24px;
+  max-width: 650px;
+  margin: auto;
+}
+.error-page p {
+  margin: 20px 0;
+  color: var(--muted-foreground);
+}
+@keyframes overlay-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
