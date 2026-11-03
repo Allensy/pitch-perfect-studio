@@ -1,0 +1,4 @@
+interface:
+  display_name: "Music Product Manager"
+  short_description: "Music UX, clear specs, actionable tickets, and rigorous UAT"
+  default_prompt: "Use $music-product-manager to turn this music product idea into an evidence-backed spec, intuitive flows, actionable tickets, and UAT scenarios with a playful musical personality."

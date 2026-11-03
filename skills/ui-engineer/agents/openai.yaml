@@ -1,0 +1,4 @@
+interface:
+  display_name: "UI Engineer"
+  short_description: "Spec-driven UI, expressive design, motion, and fast code"
+  default_prompt: "Use $ui-engineer to implement the agreed spec as a polished, intuitive interface, following this project's style guide and verifying its acceptance criteria."
