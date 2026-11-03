@@ -13,17 +13,22 @@ import {
 import * as Tabs from '@radix-ui/react-tabs';
 import { LazyMotion, domAnimation, m, MotionConfig, useReducedMotion } from 'motion/react';
 import {
+  Activity,
+  AudioLines,
   ArrowRight,
   ArrowUpRight,
   Check,
   ChevronLeft,
   ChevronRight,
+  Layers3,
   Mic,
+  Music2,
   Play,
   Settings2,
   Square,
   Volume2,
   VolumeX,
+  type LucideIcon,
 } from 'lucide-react';
 import type {
   AppState,
@@ -54,12 +59,12 @@ import { HelpDialog } from './components/help-dialog';
 import { Dialog, DialogContent, DialogDescription, DialogTitle } from './components/ui/dialog';
 import './styles.css';
 
-const modes: { id: Mode; label: string; symbol: string }[] = [
-  { id: 'notes', label: 'Notes', symbol: '♫' },
-  { id: 'intervals', label: 'Intervals', symbol: '↗' },
-  { id: 'chords', label: 'Chords', symbol: '≡' },
-  { id: 'harmony', label: 'Harmony', symbol: '♬' },
-  { id: 'tuner', label: 'Tuner', symbol: '⌁' },
+const modes: { id: Mode; label: string; icon: LucideIcon }[] = [
+  { id: 'notes', label: 'Notes', icon: Music2 },
+  { id: 'intervals', label: 'Intervals', icon: ArrowUpRight },
+  { id: 'chords', label: 'Chords', icon: Layers3 },
+  { id: 'harmony', label: 'Harmony', icon: AudioLines },
+  { id: 'tuner', label: 'Tuner', icon: Activity },
 ];
 const pitches = Array.from({ length: 49 }, (_, i) => i + 36);
 const title = {
@@ -172,9 +177,7 @@ function Studio({ runtime: controller }: { runtime: Runtime }) {
       <Tabs.List className="mode-nav" aria-label="Training modes">
         {modes.map((mode) => (
           <Tabs.Trigger key={mode.id} value={mode.id} className="mode-button">
-            <span className="nav-symbol" aria-hidden="true">
-              {mode.symbol}
-            </span>
+            <mode.icon className="mode-icon" strokeWidth={1.75} aria-hidden="true" />
             <span>{mode.label}</span>
           </Tabs.Trigger>
         ))}

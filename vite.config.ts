@@ -19,6 +19,7 @@ export default defineConfig(({ mode }) => {
     }
   }
   return {
+    base: mode === 'github-pages' ? '/pitch-perfect-studio/' : '/',
     resolve: { alias: { '@': fileURLToPath(new URL('./src', import.meta.url)) } },
     plugins: [react(), tailwindcss()],
     server: {

@@ -38,6 +38,12 @@ numbered steps and optional context. It owns only local open state; guidance
 does not alter settings or practice state. Keep action controls and actionable
 range/permission errors on the practice page.
 
+Use the existing Lucide SVG icon set for interface controls and mode navigation.
+Mode icons share a 22px box and 1.75 stroke weight (17px in short landscape
+navigation), inherit the active/muted text color, and are decorative beside
+visible labels. Do not use Unicode or emoji glyphs as interface icons: their
+shape, color and alignment depend on the device font.
+
 ## Persistence and privacy
 
 `pitch_perfect_studio_v2` stores preferences and progress in localStorage. Valid

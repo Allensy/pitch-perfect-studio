@@ -336,10 +336,10 @@ a {
   background: var(--primary);
   border-radius: 3px 3px 0 0;
 }
-.nav-symbol {
-  font:
-    25px/1 Georgia,
-    serif;
+.mode-icon {
+  width: 22px;
+  height: 22px;
+  flex-shrink: 0;
 }
 .page-content {
   padding: 36px 42px 56px;
@@ -1760,9 +1760,6 @@ a {
   .mode-button[data-state='active']:after {
     display: none;
   }
-  .nav-symbol {
-    font-size: 23px;
-  }
   .page-content {
     padding: 24px 18px calc(112px + env(safe-area-inset-bottom, 0px));
   }
@@ -2301,8 +2298,9 @@ a {
     font-size: 10px;
     gap: 4px;
   }
-  .nav-symbol {
-    font-size: 17px;
+  .mode-icon {
+    width: 17px;
+    height: 17px;
   }
   .mobile-capture {
     bottom: calc(55px + env(safe-area-inset-bottom, 0px));

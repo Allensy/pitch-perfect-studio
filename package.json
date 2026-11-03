@@ -15,6 +15,7 @@
     "test:watch": "vitest",
     "test:e2e": "playwright test",
     "build": "tsc --noEmit && vite build",
+    "build:pages": "tsc --noEmit && vite build --mode github-pages",
     "preview": "vite preview --host 127.0.0.1 --port 4174",
     "format": "prettier --write src tests e2e *.config.ts eslint.config.js tsconfig.json index.html components.json",
     "format:check": "prettier --check src tests e2e *.config.ts eslint.config.js tsconfig.json index.html components.json"
@@ -68,5 +69,5 @@
   "bugs": {
     "url": "https://github.com/Allensy/pitch-perfect-studio/issues"
   },
-  "homepage": "https://github.com/Allensy/pitch-perfect-studio#readme"
+  "homepage": "https://allensy.github.io/pitch-perfect-studio/"
 }

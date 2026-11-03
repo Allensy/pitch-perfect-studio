@@ -3,6 +3,9 @@
 A pocket rehearsal room for ear training and vocal practice, built with React,
 TypeScript and Web Audio.
 
+**[Open the app](https://allensy.github.io/pitch-perfect-studio/)** — HTTPS hosting
+supports phone microphone permission without a local development certificate.
+
 - **Notes:** identify pitches by note name or exact octave.
 - **Intervals:** practice twelve intervals with melodic and harmonic playback.
 - **Chords:** recognize eleven chord qualities and their inversions.
@@ -83,6 +86,28 @@ HTTP, HTTPS, localhost and LAN addresses each have separate browser storage, so
 your phone will start with its own progress.
 
 ## Development
+
+### Deployment
+
+GitHub Pages publishes the app at
+<https://allensy.github.io/pitch-perfect-studio/>. On a push to `main`, the CI
+workflow runs checks and browser tests, then builds and deploys the static site.
+Pull requests run validation without publishing. To redeploy the current `main`
+commit, run the CI workflow manually from GitHub Actions.
+
+The repository Pages source must be **GitHub Actions**. `npm run build:pages`
+uses the `/pitch-perfect-studio/` asset base; `npm run build` keeps `/` for other
+hosting. To inspect the Pages build locally:
+
+```sh
+npm run build:pages
+npm run preview -- --mode github-pages
+```
+
+Open <http://127.0.0.1:4174/pitch-perfect-studio/>. Microphone permission is still
+required on the hosted app, and its browser history is separate from localhost.
+
+### Checks
 
 ```sh
 npm run check         # TypeScript, lint and formatting checks
