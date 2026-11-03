@@ -1,18 +1,56 @@
 import { Button } from '@/components/ui/button';
 import { SelectField } from '@/components/ui/fields';
 import { harmonyChallengeOptions, harmonyRootOptions } from '@/components/practice-options';
-import { availableHarmonyTargets } from '@/domain/exercises';
 import { noteName, pitchLabel } from '@/domain/music';
-import type { AppState, Runtime } from '@/domain/types';
+import type { ChallengeId, Settings, VocalTarget } from '@/domain/types';
+import type { PitchNotationSettings } from './contracts';
 import { ArrowRight, Play, Square } from 'lucide-react';
-import { MicControls } from './MicrophoneControls';
-import { PitchDisplay } from './PitchDisplay';
+import { MicControls, type MicrophoneControlsProps } from './MicrophoneControls';
+import { PitchDisplay, type PitchDisplayProps } from './PitchDisplay';
 import { HarmonyHelp } from './HarmonyHelp';
-import { changeHarmony } from './settings-actions';
 
-export function HarmonyTargetPractice({ state, runtime }: { state: AppState; runtime: Runtime }) {
-  const targetCount = availableHarmonyTargets(state.settings).length;
-  const tonicOnly = state.settings.harmony.rootPolicy === 'tonic';
+export interface HarmonyTargetPracticeProps {
+  challengeId: ChallengeId;
+  rootPolicy: Settings['harmony']['rootPolicy'];
+  target: VocalTarget | null;
+  targetCount: number;
+  error: string | null;
+  playing: boolean;
+  rearm: boolean;
+  settings: PitchNotationSettings;
+  microphone: MicrophoneControlsProps;
+  pitch: Omit<PitchDisplayProps, 'target' | 'tolerance' | 'free'>;
+  onChallengeChange: (id: ChallengeId) => void;
+  onRootPolicyChange: (policy: Settings['harmony']['rootPolicy']) => void;
+  onEditSetup: () => void;
+  onNext: () => void;
+  onToggleBacking: () => void;
+  onCue: () => void;
+  onBlend: () => void;
+  onRepeat: () => void;
+}
+
+export function HarmonyTargetPractice({
+  challengeId,
+  rootPolicy,
+  target,
+  targetCount,
+  error,
+  playing,
+  rearm,
+  settings,
+  microphone,
+  pitch,
+  onChallengeChange,
+  onRootPolicyChange,
+  onEditSetup,
+  onNext,
+  onToggleBacking,
+  onCue,
+  onBlend,
+  onRepeat,
+}: HarmonyTargetPracticeProps) {
+  const tonicOnly = rootPolicy === 'tonic';
   return (
     <>
       <HarmonyHelp />
@@ -20,32 +58,32 @@ export function HarmonyTargetPractice({ state, runtime }: { state: AppState; run
         <SelectField
           label="Harmony challenge"
           className=""
-          value={state.settings.harmony.challengeId}
+          value={challengeId}
           options={harmonyChallengeOptions}
-          onChange={(challengeId) => changeHarmony(runtime, state.settings, { challengeId })}
+          onChange={onChallengeChange}
         />
         <SelectField
           label="Root practice"
           className=""
-          value={state.settings.harmony.rootPolicy}
+          value={rootPolicy}
           options={harmonyRootOptions}
-          onChange={(rootPolicy) => changeHarmony(runtime, state.settings, { rootPolicy })}
+          onChange={onRootPolicyChange}
         />
       </div>
-      {state.vocalError && (
+      {error && (
         <div className="notice notice-error" role="alert">
-          <p>{state.vocalError}</p>
-          <Button onClick={() => runtime.setSetup(true)}>Edit range or challenge</Button>
+          <p>{error}</p>
+          <Button onClick={onEditSetup}>Edit range or challenge</Button>
         </div>
       )}
       <div className="harmony-context">
         <div>
           <span>Reference root</span>
-          <strong>{state.vocal ? pitchLabel(state.vocal.rootMidi, state.settings) : '—'}</strong>
+          <strong>{target ? pitchLabel(target.rootMidi, settings) : '—'}</strong>
         </div>
         <div>
           <span>Your target</span>
-          <strong>{state.vocal ? pitchLabel(state.vocal.targetMidi, state.settings) : '—'}</strong>
+          <strong>{target ? pitchLabel(target.targetMidi, settings) : '—'}</strong>
         </div>
         <div>
           <span>Tolerance</span>
@@ -69,63 +107,43 @@ export function HarmonyTargetPractice({ state, runtime }: { state: AppState; run
           )}
         </div>
         <div className="harmony-next-actions">
-          <Button
-            variant="primary"
-            onClick={() => runtime.newReference()}
-            disabled={targetCount < 2}
-          >
+          <Button variant="primary" onClick={onNext} disabled={targetCount < 2}>
             Next target <ArrowRight size={14} aria-hidden="true" />
           </Button>
-          {targetCount < 2 && <Button onClick={() => runtime.setSetup(true)}>Edit range</Button>}
+          {targetCount < 2 && <Button onClick={onEditSetup}>Edit range</Button>}
           {tonicOnly && (
-            <Button
-              variant="ghost"
-              onClick={() => changeHarmony(runtime, state.settings, { rootPolicy: 'scale' })}
-            >
+            <Button variant="ghost" onClick={() => onRootPolicyChange('scale')}>
               Vary notes in key
             </Button>
           )}
         </div>
       </div>
       <div className="reference-row">
-        <Button
-          onClick={() => (state.playing ? runtime.stopPlayback() : runtime.play())}
-          disabled={!state.vocal}
-        >
-          {state.playing ? (
+        <Button onClick={onToggleBacking} disabled={!target}>
+          {playing ? (
             <Square size={14} aria-hidden="true" />
           ) : (
             <Play size={14} aria-hidden="true" />
           )}
-          {state.playing ? 'Stop backing' : 'Hold backing'}
+          {playing ? 'Stop backing' : 'Hold backing'}
         </Button>
-        <Button
-          onClick={() => {
-            if (state.vocal) runtime.audition(state.vocal.targetMidi);
-          }}
-          disabled={!state.vocal}
-        >
+        <Button onClick={onCue} disabled={!target}>
           Cue my note
         </Button>
-        <Button onClick={() => runtime.playBlend()} disabled={!state.vocal}>
+        <Button onClick={onBlend} disabled={!target}>
           Preview full blend
         </Button>
       </div>
       <p className="hint">
-        Backing voices: {state.vocal ? state.vocal.backingMidi.map(noteName).join(' · ') : '—'}.
-        Backing register C2–C6 may use notes outside your sung range. References pause and reset the
-        hold; previewing the blend never earns a lock.
+        Backing voices: {target ? target.backingMidi.map(noteName).join(' · ') : '—'}. Backing
+        register C2–C6 may use notes outside your sung range. References pause and reset the hold;
+        previewing the blend never earns a lock.
       </p>
       <div className="tuner-well">
-        <MicControls state={state} runtime={runtime} />
-        <PitchDisplay
-          runtime={runtime}
-          state={state}
-          target={state.vocal?.targetMidi}
-          tolerance={25}
-        />
-        {state.rearm && (
-          <Button variant="primary" onClick={() => runtime.readyAgain()}>
+        <MicControls {...microphone} />
+        <PitchDisplay {...pitch} target={target?.targetMidi} tolerance={25} />
+        {rearm && (
+          <Button variant="primary" onClick={onRepeat}>
             Repeat this target
           </Button>
         )}

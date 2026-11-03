@@ -1,37 +1,46 @@
 import { cn } from '@/components/ui/button';
 import { noteName, pitchLabel } from '@/domain/music';
-import type { AppState, Runtime } from '@/domain/types';
+import type { CaptureStatus, PitchView, Source } from '@/domain/types';
+import type { PitchNotationSettings } from './contracts';
 import { useSyncExternalStore } from 'react';
 import { pitchPresentation, signedCents } from './pitch-presentation';
 import { PitchHistoryChart } from './PitchHistoryChart';
 import { PitchHoldProgress } from './PitchHoldProgress';
 
-export function PitchDisplay({
-  runtime,
-  state,
-  free = false,
-  target,
-  tolerance,
-}: {
-  runtime: Runtime;
-  state: AppState;
+export interface PitchDisplayProps {
+  source: Source<PitchView>;
+  settings: PitchNotationSettings;
+  status: CaptureStatus;
   free?: boolean;
   target?: number;
   tolerance: number;
-}) {
-  const pitch = useSyncExternalStore(runtime.pitch.subscribe, runtime.pitch.getSnapshot);
+  rearm: boolean;
+  complete: boolean;
+}
+
+export function PitchDisplay({
+  source,
+  settings,
+  status,
+  free = false,
+  target,
+  tolerance,
+  rearm,
+  complete,
+}: PitchDisplayProps) {
+  const pitch = useSyncExternalStore(source.subscribe, source.getSnapshot);
   const view = pitchPresentation(pitch, free, target, tolerance);
   const { nearestMidi, cents, measured, meaning, beyond } = view;
   return (
     <div className="pitch-display">
       <div className="pitch-reading">
         <div className="pitch-note">
-          {measured && nearestMidi !== null ? pitchLabel(nearestMidi, state.settings) : '—'}
+          {measured && nearestMidi !== null ? pitchLabel(nearestMidi, settings) : '—'}
         </div>
         <p>
           {measured
             ? `${pitch.frequency?.toFixed(1)} Hz · nearest note ${pitch.nearestCents === null ? '—' : signedCents(pitch.nearestCents)}`
-            : state.capture === 'listening'
+            : status === 'listening'
               ? 'Sing one steady note. Your reading will appear here.'
               : 'A steady note starts here.'}
         </p>
@@ -79,8 +88,8 @@ export function PitchDisplay({
         <PitchHoldProgress
           hold={pitch.hold}
           preview={pitch.preview}
-          rearm={state.rearm}
-          complete={state.targetComplete}
+          rearm={rearm}
+          complete={complete}
           tolerance={tolerance}
         />
       )}

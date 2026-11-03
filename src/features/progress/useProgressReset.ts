@@ -1,8 +1,7 @@
-import type { Runtime } from '@/domain/types';
 import { useRef, useState } from 'react';
 
 /** Own the reset confirmation transaction independently of progress presentation. */
-export function useProgressReset(runtime: Pick<Runtime, 'stopAll' | 'resetProgress'>) {
+export function useProgressReset(onStop: () => void, onReset: () => boolean) {
   const [confirming, setConfirming] = useState(false);
   const [result, setResult] = useState('');
   const returnFocusRef = useRef<HTMLElement | null>(null);
@@ -10,13 +9,13 @@ export function useProgressReset(runtime: Pick<Runtime, 'stopAll' | 'resetProgre
   function requestReset() {
     const active = document.activeElement;
     returnFocusRef.current = active instanceof HTMLElement ? active : null;
-    runtime.stopAll();
+    onStop();
     setResult('');
     setConfirming(true);
   }
 
   function confirmReset() {
-    const saved = runtime.resetProgress();
+    const saved = onReset();
     setResult(
       saved
         ? 'Progress reset. Musical setup kept.'

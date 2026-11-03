@@ -33,7 +33,7 @@ export function AppHeader({
           {NOTE_NAMES[global.rootKey]} {SCALES[global.scaleId].name} · {noteName(global.lowMidi)}–
           {noteName(global.highMidi)}
         </span>
-        <CaptureIndicator state={state} runtime={runtime} />
+        <CaptureIndicator status={state.capture} onStop={runtime.stopAll} />
         <Button onClick={() => runtime.setSetup(true)}>
           <Settings2 size={16} aria-hidden="true" />
           Setup

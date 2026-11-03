@@ -75,7 +75,11 @@ relevant requirement identifiers in implementation handoffs.
   SelectField/CheckField for native form controls and the shared option catalogs;
   avoid duplicate enum casts, preset rules and answer preparation in JSX.
   Keep music/scoring rules in domain/runtime and presentation calculations in
-  pure feature models. ESLint enforces that domain/service owners cannot import UI.
+  pure feature models. Views receive focused data and callbacks; whole-runtime
+  wiring belongs in named `src/app/` adapters. Pure models/catalogs must not
+  depend on React or UI types, and shared UI primitives must not contain product
+  policy. ESLint enforces these dependency boundaries. Review architecture by
+  ownership and realistic extension needs, not file or line counts.
 - Preserve all existing modes and migration from `pitch_perfect_studio_v1` to
   `pitch_perfect_studio_v2`. Normal practice must not alter legacy history.
 - Skips and simulated microphone input must never earn XP or change accuracy.

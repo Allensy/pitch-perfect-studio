@@ -2,30 +2,66 @@ import { captureLabel } from '@/components/audio/capture-status';
 import { Button, cn } from '@/components/ui/button';
 import { SelectField } from '@/components/ui/fields';
 import { tunerDrillOptions, tunerToleranceOptions } from './options';
-import { changeTuner } from './settings-actions';
 import { pitchLabel } from '@/domain/music';
-import type { AppState, Runtime, Settings } from '@/domain/types';
-import { MicControls } from '@/features/vocal/MicrophoneControls';
-import { PitchDisplay } from '@/features/vocal/PitchDisplay';
+import type { Settings } from '@/domain/types';
+import type { PitchNotationSettings } from './contracts';
+import { MicControls, type MicrophoneControlsProps } from './MicrophoneControls';
+import { PitchDisplay, type PitchDisplayProps } from './PitchDisplay';
 import { ArrowRight, ArrowUpRight } from 'lucide-react';
-export function Tuner({ runtime, state }: { runtime: Runtime; state: AppState }) {
-  const free = state.settings.tuner.drillMode === 'free';
-  const target = state.queue[state.queueIndex];
-  const change = (drillMode: Settings['tuner']['drillMode']) =>
-    changeTuner(runtime, state.settings, { drillMode });
+export interface TunerProps {
+  drillMode: Settings['tuner']['drillMode'];
+  tolerance: Settings['tuner']['toleranceCents'];
+  a4: number;
+  queue: readonly number[];
+  queueIndex: number;
+  error: string | null;
+  rearm: boolean;
+  settings: PitchNotationSettings;
+  microphone: MicrophoneControlsProps;
+  pitch: Omit<PitchDisplayProps, 'target' | 'tolerance' | 'free'>;
+  onDrillChange: (mode: Settings['tuner']['drillMode']) => void;
+  onToleranceChange: (cents: Settings['tuner']['toleranceCents']) => void;
+  onHearTarget: () => void;
+  onEditSetup: () => void;
+  onRepeat: () => void;
+  onNext: () => void;
+  onSelectTarget: (index: number) => void;
+}
+
+export function Tuner({
+  drillMode,
+  tolerance,
+  a4,
+  queue,
+  queueIndex,
+  error,
+  rearm,
+  settings,
+  microphone,
+  pitch,
+  onDrillChange,
+  onToleranceChange,
+  onHearTarget,
+  onEditSetup,
+  onRepeat,
+  onNext,
+  onSelectTarget,
+}: TunerProps) {
+  const free = drillMode === 'free';
+  const target = queue[queueIndex];
   return (
     <section aria-label="Tuner practice">
       <div className="mode-switch-row">
         <div className="segmented" role="group" aria-label="Tuner task">
-          <Button aria-pressed={!free} onClick={() => change('target')}>
+          <Button aria-pressed={!free} onClick={() => onDrillChange('target')}>
             Target practice
           </Button>
-          <Button aria-pressed={free} onClick={() => change('free')}>
+          <Button aria-pressed={free} onClick={() => onDrillChange('free')}>
             Free tuner
           </Button>
         </div>
         {!free && (
-          <Button variant="ghost" onClick={() => runtime.play()} disabled={target == null}>
+          <Button variant="ghost" onClick={onHearTarget} disabled={target == null}>
             Hear target <ArrowUpRight size={14} aria-hidden="true" />
           </Button>
         )}
@@ -35,56 +71,50 @@ export function Tuner({ runtime, state }: { runtime: Runtime; state: AppState })
           <SelectField
             label="Drill"
             className=""
-            value={state.settings.tuner.drillMode}
+            value={drillMode}
             options={tunerDrillOptions}
-            onChange={change}
+            onChange={onDrillChange}
           />
           <SelectField
             label="Tolerance"
             className=""
-            value={state.settings.tuner.toleranceCents}
+            value={tolerance}
             options={tunerToleranceOptions}
-            onChange={(toleranceCents) => changeTuner(runtime, state.settings, { toleranceCents })}
+            onChange={onToleranceChange}
           />
         </div>
       )}
-      {state.vocalError && (
+      {error && (
         <div className="notice notice-error" role="alert">
-          <p>{state.vocalError}</p>
-          <Button onClick={() => runtime.setSetup(true)}>Edit range or drill</Button>
+          <p>{error}</p>
+          <Button onClick={onEditSetup}>Edit range or drill</Button>
         </div>
       )}
       <div className="tuner-well">
         <div className="tuner-top">
           <span>
             {free ? (
-              `Ungraded · A4 ${state.settings.global.a4} Hz`
+              `Ungraded · A4 ${a4} Hz`
             ) : (
               <>
-                Target <strong>{target == null ? '—' : pitchLabel(target, state.settings)}</strong>
+                Target <strong>{target == null ? '—' : pitchLabel(target, settings)}</strong>
               </>
             )}
           </span>
-          <span className={cn('input-status', state.capture === 'listening' && 'is-live')}>
-            {captureLabel(state.capture)}
+          <span className={cn('input-status', microphone.status === 'listening' && 'is-live')}>
+            {captureLabel(microphone.status)}
           </span>
         </div>
-        <MicControls state={state} runtime={runtime} />
-        <PitchDisplay
-          runtime={runtime}
-          state={state}
-          free={free}
-          target={target}
-          tolerance={state.settings.tuner.toleranceCents}
-        />
+        <MicControls {...microphone} />
+        <PitchDisplay {...pitch} free={free} target={target} tolerance={tolerance} />
         {!free && (
           <div className="button-row">
-            {state.rearm ? (
-              <Button variant="primary" onClick={() => runtime.readyAgain()}>
+            {rearm ? (
+              <Button variant="primary" onClick={onRepeat}>
                 Repeat this target
               </Button>
             ) : null}
-            <Button onClick={() => runtime.nextTarget()} disabled={!state.queue.length}>
+            <Button onClick={onNext} disabled={!queue.length}>
               Next target <ArrowRight size={14} aria-hidden="true" />
             </Button>
           </div>
@@ -94,20 +124,16 @@ export function Tuner({ runtime, state }: { runtime: Runtime; state: AppState })
         <section className="queue-section">
           <div className="section-heading">
             <h2>Up next</h2>
-            <span>
-              {state.queue.length
-                ? `${state.queueIndex + 1} of ${state.queue.length}`
-                : 'No targets'}
-            </span>
+            <span>{queue.length ? `${queueIndex + 1} of ${queue.length}` : 'No targets'}</span>
           </div>
           <div className="queue">
-            {state.queue.map((midi, i) => (
+            {queue.map((midi, i) => (
               <Button
                 key={`${i}-${midi}`}
-                aria-pressed={i === state.queueIndex}
-                onClick={() => runtime.selectTarget(i)}
+                aria-pressed={i === queueIndex}
+                onClick={() => onSelectTarget(i)}
               >
-                {pitchLabel(midi, state.settings)}
+                {pitchLabel(midi, settings)}
               </Button>
             ))}
           </div>

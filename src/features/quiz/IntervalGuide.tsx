@@ -1,7 +1,10 @@
 import { Button } from '@/components/ui/button';
 import { INTERVALS } from '@/domain/music';
-import type { Runtime } from '@/domain/types';
-export function IntervalGuide({ onAudition }: { onAudition: Runtime['auditionInterval'] }) {
+export function IntervalGuide({
+  onAudition,
+}: {
+  onAudition: (semitones: number, descending: boolean) => void;
+}) {
   return (
     <details className="disclosure">
       <summary>Song anchors &amp; interval guide</summary>

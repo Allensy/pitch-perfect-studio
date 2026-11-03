@@ -1,10 +1,10 @@
 import { Button } from '@/components/ui/button';
-import type { CaptureStatus, Runtime } from '@/domain/types';
+import type { CaptureStatus } from '@/domain/types';
 import { Square } from 'lucide-react';
 
 type CaptureProps = {
-  state: { capture: CaptureStatus };
-  runtime: Pick<Runtime, 'stopAll'>;
+  status: CaptureStatus;
+  onStop: () => void;
 };
 
 export function captureLabel(status: CaptureStatus) {
@@ -17,27 +17,27 @@ export function captureLabel(status: CaptureStatus) {
     interrupted: 'Input interrupted',
   }[status];
 }
-export function CaptureIndicator({ state, runtime }: CaptureProps) {
-  return state.capture === 'off' ? null : (
+export function CaptureIndicator({ status, onStop }: CaptureProps) {
+  return status === 'off' ? null : (
     <div className="capture-indicator">
       <span>
         <i />
-        {captureLabel(state.capture)}
+        {captureLabel(status)}
       </span>
-      <Button size="small" variant="danger" onClick={() => runtime.stopAll()}>
-        {state.capture === 'waiting' ? 'Cancel' : 'Stop all'}
+      <Button size="small" variant="danger" onClick={onStop}>
+        {status === 'waiting' ? 'Cancel' : 'Stop all'}
       </Button>
     </div>
   );
 }
 
-export function MobileCapture({ state, runtime }: CaptureProps) {
-  return state.capture === 'off' ? null : (
+export function MobileCapture({ status, onStop }: CaptureProps) {
+  return status === 'off' ? null : (
     <div className="mobile-capture">
-      <span>{state.capture === 'listening' ? 'Microphone on' : captureLabel(state.capture)}</span>
-      <Button size="small" variant="danger" onClick={() => runtime.stopAll()}>
+      <span>{status === 'listening' ? 'Microphone on' : captureLabel(status)}</span>
+      <Button size="small" variant="danger" onClick={onStop}>
         <Square size={12} aria-hidden="true" />
-        {state.capture === 'waiting' ? 'Cancel' : 'Stop all'}
+        {status === 'waiting' ? 'Cancel' : 'Stop all'}
       </Button>
     </div>
   );

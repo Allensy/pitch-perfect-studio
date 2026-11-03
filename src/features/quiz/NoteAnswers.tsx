@@ -19,7 +19,7 @@ export function NoteAnswers({
   onSubmit,
   onError,
 }: {
-  settings: Settings;
+  settings: Pick<Settings, 'global' | 'notes'>;
   round: Round;
   onSubmit: (answer: Answer) => void;
   onError: (message: string) => void;

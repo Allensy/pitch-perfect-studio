@@ -20,25 +20,37 @@ existing visuals and musical behavior rather than introducing product changes.
 - REF-06: Existing 118 service/domain tests and 16 browser scenarios keep passing;
   focused tests cover extracted state/formatting contracts. Check responsive
   screenshots and keyboard/dialog behavior against the pre-refactor baseline.
+- REF-07: Feature views receive explicit domain data and callbacks. Only named
+  application adapters wire the whole runtime/store snapshot into feature UI.
+- REF-08: Pure models and catalogs have no dependency on React, DOM globals or
+  UI component types. Shared UI knows no practice/scoring policy.
+- REF-09: Representative feature views can be rendered/tested without building
+  the application runtime or a complete AppState fixture.
+- REF-10: The specialist profile requires an architecture review of ownership,
+  extensibility, reuse and readable contracts. File/line counts are descriptive
+  metrics, not acceptance evidence for these properties.
 
-Implemented on the refactor branch: App is a 17-line composition entry; the
-Setup dialog is 153 lines and the quiz panel is 117 lines. Local validation:
-150 unit/service/hook tests and 20 browser scenarios pass, alongside strict
-types, lint, formatting and the production build. The compiled CSS hash is
-unchanged. Phone/desktop screenshots were inspected against the baseline;
-animated feedback opacity makes immediate-load screenshots non-identical.
-Review and merge remain separate from this local verification. Real-device
+Implemented on the refactor branch: feature views use explicit data/action
+contracts, with runtime and snapshot wiring in application adapters. Shared
+controls and option catalogs are reused without carrying application policy;
+pure models have no React or UI-type dependencies. Isolated view tests exercise
+these contracts without constructing an application runtime. Dependency rules
+are lint-enforced. Final validation is recorded in the pull request; real-device
 audio validation is not claimed by this structural change.
 
 ## Frontend ownership
 
 - `src/app/`: shell composition, navigation, heading, and error boundary. Studio
   owns the application snapshot subscription and Setup opener focus capture.
+  `QuizPractice`, `VocalPractice`, and `WorkspacePanels` are explicit adapters:
+  they map runtime commands and snapshots into feature props, merge settings
+  patches, and compose related features. Whole-runtime dependencies stop here.
 - `src/components/ui/`: shared buttons, dialogs, labeled typed native selects,
   and checkbox controls. Native event conversion is implemented once; callers
   receive declared option values rather than casting arbitrary strings.
 - `src/components/audio/`: output controls and capture status, with narrow props
-  and callbacks to the runtime. Shared option labels live in `practice-options.ts`.
+  and callbacks. They do not import the runtime. Shared option labels live in
+  `practice-options.ts`; the option value contract lives in `shared/options.ts`.
 - `src/features/setup/`: dialog composition, independent per-mode settings
   sections, and a transactional draft hook. Pure presets/candidate preparation
   live in `domain/settings-presets.ts`; runtime remains the authoritative validator.
@@ -47,7 +59,9 @@ audio validation is not claimed by this structural change.
   Entry preparation and submitted-answer formatting are pure helpers. Forms
   reset at the round identity boundary; retries retain local entries.
 - `src/features/piano/`: instrument controls and a pure key-layout/eligibility
-  model. Auditions and answer submissions call separate runtime commands.
+  model. Audition and answer callbacks are separate; the app adapter connects
+  them to the appropriate runtime commands. Quiz receives the keyboard through
+  a composition slot rather than importing a connected instrument.
 - `src/features/vocal/`: Harmony target/mixer/help, tuner controls, and pitch
   display. Only PitchDisplay subscribes to live samples; chart and hold UI
   receive derived props. Pitch-history geometry and reading descriptions are
@@ -62,9 +76,18 @@ audio validation is not claimed by this structural change.
 Feature components own transient form state; persistent settings, scores,
 capture and playback remain runtime-owned. Do not create a second settings
 store inside a control or move resource lifetimes into rendering. ESLint rejects
-React/UI imports from domain and service-owner modules.
-Feature modules also cannot import the application composition layer; shared
-mode/option labels live below the shell, alongside the shared controls.
+React/UI imports from domain, service owners and pure feature models/catalogs. Feature views cannot import AppState, Runtime or the
+application composition layer; shared UI primitives cannot import product
+modules. Shared mode/option labels live below the shell. These rules guard the
+boundaries, while code review checks whether each contract is appropriately
+focused and extension points serve actual needs.
+
+For example, a different pitch source implements the existing generic Source
+contract without changing the display; a quiz keyboard can be replaced through
+composition without changing answer entry; and a settings section can be tested
+with its own values and callbacks. Adding a mode still requires deliberate
+updates to domain vocabulary, runtime behavior, navigation and Setup sections;
+there is no speculative plugin registry or generic form engine.
 
 Pitch Perfect Studio is a static, client-side React application. Vite serves and
 builds the app; strict TypeScript, Tailwind CSS, owned Radix-backed UI components

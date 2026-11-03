@@ -1,30 +1,27 @@
 import { Button } from '@/components/ui/button';
-import type { AppState, Runtime } from '@/domain/types';
 import { Volume2, VolumeX } from 'lucide-react';
 import { useId } from 'react';
 
 export function Output({
-  state,
-  runtime,
+  volume,
+  muted,
+  onChange,
 }: {
-  state: Pick<AppState, 'volume' | 'muted'>;
-  runtime: Pick<Runtime, 'setOutput'>;
+  volume: number;
+  muted: boolean;
+  onChange: (volume: number, muted: boolean) => void;
 }) {
   const id = useId();
   return (
     <div className="output">
       <div className="output-row">
-        <Button
-          variant="ghost"
-          onClick={() => runtime.setOutput(state.volume, !state.muted)}
-          aria-pressed={state.muted}
-        >
-          {state.muted ? (
+        <Button variant="ghost" onClick={() => onChange(volume, !muted)} aria-pressed={muted}>
+          {muted ? (
             <VolumeX size={16} aria-hidden="true" />
           ) : (
             <Volume2 size={16} aria-hidden="true" />
           )}
-          {state.muted ? 'Unmute output' : 'Mute output'}
+          {muted ? 'Unmute output' : 'Mute output'}
         </Button>
         <label className="sr-only" htmlFor={id}>
           Output volume
@@ -34,11 +31,11 @@ export function Output({
           type="range"
           min="0"
           max="100"
-          value={state.volume}
-          aria-valuetext={`${state.volume}%${state.muted ? ', muted' : ''}`}
-          onChange={(event) => runtime.setOutput(Number(event.target.value), state.muted)}
+          value={volume}
+          aria-valuetext={`${volume}%${muted ? ', muted' : ''}`}
+          onChange={(event) => onChange(Number(event.target.value), muted)}
         />
-        <span>{state.volume}%</span>
+        <span>{volume}%</span>
       </div>
       <p>Output only. Muting sound does not stop the microphone.</p>
     </div>

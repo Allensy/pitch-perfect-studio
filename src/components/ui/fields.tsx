@@ -1,3 +1,4 @@
+import type { Option as SelectOption } from '@/shared/options';
 import type { InputHTMLAttributes, ReactNode, SelectHTMLAttributes } from 'react';
 
 export function Field({
@@ -17,11 +18,7 @@ export function Field({
   );
 }
 
-export interface SelectOption<Value extends string | number> {
-  value: Value;
-  label: string;
-  disabled?: boolean;
-}
+export type { Option as SelectOption } from '@/shared/options';
 type SelectProps<Value extends string | number> = Omit<
   SelectHTMLAttributes<HTMLSelectElement>,
   'value' | 'onChange' | 'children'

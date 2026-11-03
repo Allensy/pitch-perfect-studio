@@ -1,20 +1,22 @@
 import { Button, cn } from '@/components/ui/button';
 import { pianoKeys } from './piano-model';
-import type { AppState, Runtime, Settings } from '@/domain/types';
+import type { Answer, Settings } from '@/domain/types';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 
 export function Piano({
-  runtime,
-  state,
+  settings,
   answerable,
+  onPreferencesChange,
+  onAnswer,
+  onAudition,
 }: {
-  runtime: Runtime;
-  state: AppState;
+  settings: Pick<Settings, 'global' | 'piano'>;
   answerable: boolean;
+  onPreferencesChange: (patch: Partial<Settings['piano']>) => void;
+  onAnswer: (answer: Answer) => void;
+  onAudition: (midi: number) => void;
 }) {
-  const { octave, inputMode: action } = state.settings.piano;
-  const updatePiano = (patch: Partial<Settings['piano']>) =>
-    runtime.applySettings({ ...state.settings, piano: { ...state.settings.piano, ...patch } });
+  const { octave, inputMode: action } = settings.piano;
   return (
     <details className="disclosure piano-disclosure">
       <summary>
@@ -26,7 +28,7 @@ export function Piano({
             <Button
               key={value}
               aria-pressed={action === value}
-              onClick={() => updatePiano({ inputMode: value })}
+              onClick={() => onPreferencesChange({ inputMode: value })}
             >
               {value === 'audition' ? 'Audition' : 'Answer'}
             </Button>
@@ -37,7 +39,7 @@ export function Piano({
             size="icon"
             aria-label="Previous keyboard octave"
             disabled={octave <= 2}
-            onClick={() => updatePiano({ octave: octave - 1 })}
+            onClick={() => onPreferencesChange({ octave: octave - 1 })}
           >
             <ChevronLeft size={16} aria-hidden="true" />
           </Button>
@@ -46,7 +48,7 @@ export function Piano({
             size="icon"
             aria-label="Next keyboard octave"
             disabled={octave >= 6}
-            onClick={() => updatePiano({ octave: octave + 1 })}
+            onClick={() => onPreferencesChange({ octave: octave + 1 })}
           >
             <ChevronRight size={16} aria-hidden="true" />
           </Button>
@@ -54,7 +56,7 @@ export function Piano({
       </div>
       <div className="piano-scroll">
         <div className="piano" role="group" aria-label={`Octave ${octave} piano`}>
-          {pianoKeys(state.settings, answerable).map((key) => (
+          {pianoKeys(settings, answerable).map((key) => (
             <button
               style={{ left: key.left }}
               key={key.midi}
@@ -64,8 +66,8 @@ export function Piano({
               aria-label={key.accessibleLabel}
               onClick={() =>
                 action === 'answer'
-                  ? runtime.submit({ pitchClass: key.pitchClass, midi: key.midi })
-                  : runtime.audition(key.midi)
+                  ? onAnswer({ pitchClass: key.pitchClass, midi: key.midi })
+                  : onAudition(key.midi)
               }
             >
               {key.name}

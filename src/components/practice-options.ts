@@ -1,6 +1,6 @@
 import { CHALLENGES, PROGRESSIONS } from '@/domain/music';
 import type { ChallengeId, Mode, ProgressionId, Settings } from '@/domain/types';
-import type { SelectOption } from './ui/fields';
+import type { Option as SelectOption } from '@/shared/options';
 
 // Shared presentation labels for the same domain choices in Setup and practice.
 export const modeOptions: readonly SelectOption<Mode>[] = [

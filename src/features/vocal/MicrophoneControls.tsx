@@ -1,37 +1,48 @@
 import { Button, cn } from '@/components/ui/button';
-import type { AppState, Runtime } from '@/domain/types';
+import type { CaptureStatus } from '@/domain/types';
 import { Mic, Square } from 'lucide-react';
 
-export function MicControls({ state, runtime }: { state: AppState; runtime: Runtime }) {
-  const live = state.capture === 'listening' || state.capture === 'waiting';
+export interface MicrophoneControlsProps {
+  status: CaptureStatus;
+  message: string;
+  onStart: () => void;
+  onStop: () => void;
+  onPreview: () => void;
+}
+
+export function MicControls({
+  status,
+  message,
+  onStart,
+  onStop,
+  onPreview,
+}: MicrophoneControlsProps) {
+  const live = status === 'listening' || status === 'waiting';
   return (
     <>
       <div className="button-row mic-buttons">
-        <Button
-          variant={live ? 'danger' : 'primary'}
-          onClick={() => (live ? runtime.stopAll() : runtime.startMic())}
-        >
+        <Button variant={live ? 'danger' : 'primary'} onClick={live ? onStop : onStart}>
           {live ? <Square size={14} aria-hidden="true" /> : <Mic size={16} aria-hidden="true" />}
-          {state.capture === 'waiting'
+          {status === 'waiting'
             ? 'Cancel microphone request'
-            : state.capture === 'listening'
+            : status === 'listening'
               ? 'Stop microphone'
-              : state.capture === 'off'
+              : status === 'off'
                 ? 'Start microphone'
                 : 'Retry microphone'}
         </Button>
-        <Button onClick={() => runtime.previewInput()} disabled={live}>
+        <Button onClick={onPreview} disabled={live}>
           Preview input
         </Button>
       </div>
       <p
         className={cn(
           'capture-message',
-          ['denied', 'unavailable', 'interrupted'].includes(state.capture) && 'field-error',
+          ['denied', 'unavailable', 'interrupted'].includes(status) && 'field-error',
         )}
         role="status"
       >
-        {state.captureMessage ||
+        {message ||
           'Microphone audio is processed locally. Use headphones so reference tones stay separate from your voice.'}
       </p>
       <p className="hint">

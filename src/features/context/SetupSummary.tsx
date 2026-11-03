@@ -1,16 +1,31 @@
 import { Output } from '@/components/audio/output-controls';
 import { Button } from '@/components/ui/button';
 import { NOTE_NAMES, SCALES, noteName } from '@/domain/music';
-import type { AppState, Runtime } from '@/domain/types';
+import type { Settings, Timbre } from '@/domain/types';
 import { ArrowUpRight } from 'lucide-react';
+const instrumentNames: Record<Timbre, string> = {
+  piano: 'Warm piano',
+  epiano: 'Electric piano',
+  strings: 'Choir / strings',
+  organ: 'Organ',
+  sine: 'Pure sine',
+};
+
+interface SetupSummaryProps {
+  settings: Settings['global'];
+  volume: number;
+  muted: boolean;
+  onOpenSetup: () => void;
+  onOutputChange: (volume: number, muted: boolean) => void;
+}
+
 export function SetupSummary({
-  state,
-  runtime,
-}: {
-  state: Pick<AppState, 'settings' | 'volume' | 'muted'>;
-  runtime: Pick<Runtime, 'setSetup' | 'setOutput'>;
-}) {
-  const g = state.settings.global;
+  settings: g,
+  volume,
+  muted,
+  onOpenSetup,
+  onOutputChange,
+}: SetupSummaryProps) {
   return (
     <section className="rail-section">
       <h2 className="rail-eyebrow">Your setup</h2>
@@ -29,27 +44,17 @@ export function SetupSummary({
         </div>
         <div>
           <dt>Instrument</dt>
-          <dd>
-            {
-              {
-                piano: 'Warm piano',
-                epiano: 'Electric piano',
-                strings: 'Choir / strings',
-                organ: 'Organ',
-                sine: 'Pure sine',
-              }[g.timbre]
-            }
-          </dd>
+          <dd>{instrumentNames[g.timbre]}</dd>
         </div>
         <div>
           <dt>Tuning</dt>
           <dd>A4 · {g.a4} Hz</dd>
         </div>
       </dl>
-      <Button variant="ghost" onClick={() => runtime.setSetup(true)}>
+      <Button variant="ghost" onClick={onOpenSetup}>
         Edit setup <ArrowUpRight size={15} aria-hidden="true" />
       </Button>
-      <Output state={state} runtime={runtime} />
+      <Output volume={volume} muted={muted} onChange={onOutputChange} />
     </section>
   );
 }

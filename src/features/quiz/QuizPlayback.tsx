@@ -1,8 +1,10 @@
 import { Button } from '@/components/ui/button';
 import { NOTE_NAMES, SCALES, pitchLabel } from '@/domain/music';
-import type { QuizMode, Round, Settings, Runtime } from '@/domain/types';
+import type { PlaybackVariant, QuizMode, Round, Settings } from '@/domain/types';
 import { Play, ArrowUpRight } from 'lucide-react';
 import { Signal } from './SoundSignal';
+import type { ReferenceKind } from './contracts';
+import { playbackHeadings, quizItemNames } from './copy';
 export function QuizPlayback({
   mode,
   round,
@@ -12,9 +14,9 @@ export function QuizPlayback({
 }: {
   mode: QuizMode;
   round: Round;
-  settings: Settings;
-  onPlay: Runtime['play'];
-  onReference: Runtime['reference'];
+  settings: Pick<Settings, 'global' | 'chords'>;
+  onPlay: (variant?: PlaybackVariant) => void;
+  onReference: (kind: ReferenceKind) => void;
 }) {
   const q = round.question;
   return (
@@ -25,17 +27,7 @@ export function QuizPlayback({
             <i />
             {NOTE_NAMES[settings.global.rootKey]} {SCALES[settings.global.scaleId].name}
           </span>
-          <span>
-            {
-              {
-                ready: 'Ready to play',
-                playing: 'Listening',
-                awaiting: 'Your turn',
-                retry: 'Another listen',
-                correct: 'Nice listening',
-              }[round.phase]
-            }
-          </span>
+          <span>{playbackHeadings[round.phase]}</span>
         </div>
         <Signal />
         <Button
@@ -46,7 +38,7 @@ export function QuizPlayback({
         >
           <Play size={16} fill="currentColor" aria-hidden="true" />
           {round.phase === 'ready'
-            ? `Play ${mode === 'notes' ? 'note' : mode === 'intervals' ? 'interval' : 'chord'}`
+            ? `Play ${quizItemNames[mode]}`
             : round.phase === 'playing'
               ? 'Playing…'
               : 'Replay'}

@@ -19,7 +19,7 @@ const whitePositions = new Map([
 ]);
 
 /** Layout and answer availability for one spatial octave; no scoring or audio side effects. */
-export function pianoKeys(settings: Settings, answerable: boolean) {
+export function pianoKeys(settings: Pick<Settings, 'global' | 'piano'>, answerable: boolean) {
   const { octave, inputMode } = settings.piano;
   return NOTE_NAMES.map((name, pitchClass) => {
     const midi = (octave + 1) * 12 + pitchClass;

@@ -3,6 +3,7 @@ import type { Round } from '@/domain/types';
 import { ArrowRight } from 'lucide-react';
 import { m, useReducedMotion } from 'motion/react';
 import { submittedAnswerLabel } from './answer-model';
+import { feedbackHeadings } from './copy';
 export function QuizFeedback({ round, onNext }: { round: Round; onNext: () => void }) {
   const reduced = useReducedMotion();
   const retry = round.phase === 'retry';
@@ -22,17 +23,7 @@ export function QuizFeedback({ round, onNext }: { round: Round; onNext: () => vo
       aria-atomic="true"
     >
       <div>
-        <strong>
-          {round.phase === 'correct'
-            ? 'Locked in.'
-            : round.phase === 'retry'
-              ? '× Not quite — try again.'
-              : round.phase === 'ready'
-                ? 'A good place to start.'
-                : round.phase === 'playing'
-                  ? 'Listen closely.'
-                  : 'What did you hear?'}
-        </strong>
+        <strong>{feedbackHeadings[round.phase]}</strong>
         {retry && (
           <p className="feedback-attempt">
             Attempt {round.attempts} · Your choice: {submittedChoice}.

@@ -1,20 +1,20 @@
 import { modeOptions } from '@/components/practice-options';
 import { Button } from '@/components/ui/button';
 import { NOTE_NAMES } from '@/domain/music';
-import type { AppState, Runtime } from '@/domain/types';
+import type { Legacy, Mode, Progress as PracticeProgress } from '@/domain/types';
 import { accuracyLabel, summarizeProgress } from './progress-model';
 import { ResetProgressDialog } from './ResetProgressDialog';
 import { useProgressReset } from './useProgressReset';
-export function Progress({
-  state,
-  runtime,
-}: {
-  state: Pick<AppState, 'mode' | 'envelope'>;
-  runtime: Pick<Runtime, 'resetProgress' | 'stopAll'>;
-}) {
-  const reset = useProgressReset(runtime);
-  const p = state.envelope.progress;
-  const legacy = state.envelope.legacyImport.snapshot;
+interface ProgressProps {
+  progress: PracticeProgress;
+  legacy: Legacy | null;
+  mode: Mode;
+  onStop: () => void;
+  onReset: () => boolean;
+}
+
+export function Progress({ progress: p, legacy, mode, onStop, onReset }: ProgressProps) {
+  const reset = useProgressReset(onStop, onReset);
   const summary = summarizeProgress(p, legacy);
   return (
     <section className="rail-section progress-section">
@@ -47,12 +47,13 @@ export function Progress({
           completions are tracked separately.
         </p>
         <dl className="progress-breakdown">
-          {(['notes', 'intervals', 'chords'] as const).map((mode) => (
-            <div key={mode}>
-              <dt>{modeOptions.find((option) => option.value === mode)?.label}</dt>
+          {(['notes', 'intervals', 'chords'] as const).map((quizMode) => (
+            <div key={quizMode}>
+              <dt>{modeOptions.find((option) => option.value === quizMode)?.label}</dt>
               <dd>
-                {p.quizzes[mode].correct}/{p.quizzes[mode].attempts} correct ·{' '}
-                {p.quizzes[mode].firstTryCorrect} first try · {p.quizzes[mode].skips} skipped
+                {p.quizzes[quizMode].correct}/{p.quizzes[quizMode].attempts} correct ·{' '}
+                {p.quizzes[quizMode].firstTryCorrect} first try · {p.quizzes[quizMode].skips}{' '}
+                skipped
               </dd>
             </div>
           ))}
@@ -75,7 +76,7 @@ export function Progress({
             </p>
           </details>
         )}
-        {state.mode === 'notes' && (
+        {mode === 'notes' && (
           <details>
             <summary>Pitch class mastery</summary>
             <div className="mastery-grid">
